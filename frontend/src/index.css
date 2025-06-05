@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -125,9 +125,104 @@ body {
   margin: 0;
 }
 
+
+.parallax {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --radius: 0.625rem;
+  --mdc-theme-primary: rgb(13, 149, 136);
+  --mdc-theme-on-primary: rgb(255, 255, 255);
+  --mdc-theme-primary-container: rgb(165, 250, 239);
+  --mdc-theme-on-primary-container: rgb(0, 32, 31);
+  --mdc-theme-secondary: rgb(77, 99, 103);
+  --mdc-theme-on-secondary: rgb(255, 255, 255);
+  --mdc-theme-secondary-container: rgb(208, 233, 237);
+  --mdc-theme-on-secondary-container: rgb(8, 31, 34);
+  --mdc-theme-tertiary: rgb(73, 94, 124);
+  --mdc-theme-on-tertiary: rgb(255, 255, 255);
+  --mdc-theme-tertiary-container: rgb(205, 227, 255);
+  --mdc-theme-on-tertiary-container: rgb(0, 27, 53);
+  --mdc-theme-error: rgb(186, 26, 26);
+  --mdc-theme-on-error: rgb(255, 255, 255);
+  --mdc-theme-error-container: rgb(255, 218, 214);
+  --mdc-theme-on-error-container: rgb(65, 0, 2);
+  --mdc-theme-background: rgb(251, 252, 250);
+  --mdc-theme-surface: rgb(251, 252, 250);
+  --mdc-theme-on-surface: rgb(26, 28, 27);
+  --mdc-theme-surface-variant: rgb(220, 228, 226);
+  --mdc-theme-on-surface-variant: rgb(65, 72, 71);
+  --mdc-theme-outline: rgb(114, 121, 119);
+  --mdc-theme-shadow: rgb(0, 0, 0);
+  --mdc-theme-inverse-surface: rgb(47, 49, 48);
+  --mdc-theme-inverse-on-surface: rgb(239, 241, 239);
+  --mdc-theme-inverse-primary: rgb(76, 218, 208);
+}
+
+.dark {
+  --mdc-theme-primary: rgb(76, 218, 208);
+  --mdc-theme-on-primary: rgb(0, 55, 54);
+  --mdc-theme-primary-container: rgb(0, 80, 77);
+  --mdc-theme-on-primary-container: rgb(165, 250, 239);
+  --mdc-theme-secondary: rgb(180, 205, 209);
+  --mdc-theme-on-secondary: rgb(31, 53, 56);
+  --mdc-theme-secondary-container: rgb(53, 75, 79);
+  --mdc-theme-on-secondary-container: rgb(208, 233, 237);
+  --mdc-theme-tertiary: rgb(177, 199, 232);
+  --mdc-theme-on-tertiary: rgb(25, 47, 76);
+  --mdc-theme-tertiary-container: rgb(47, 69, 99);
+  --mdc-theme-on-tertiary-container: rgb(205, 227, 255);
+  --mdc-theme-error: rgb(255, 180, 171);
+  --mdc-theme-on-error: rgb(105, 0, 5);
+  --mdc-theme-error-container: rgb(147, 0, 10);
+  --mdc-theme-on-error-container: rgb(255, 218, 214);
+  --mdc-theme-background: rgb(26, 28, 27);
+  --mdc-theme-surface: rgb(26, 28, 27);
+  --mdc-theme-on-surface: rgb(225, 227, 225);
+  --mdc-theme-surface-variant: rgb(65, 72, 71);
+  --mdc-theme-on-surface-variant: rgb(193, 200, 198);
+  --mdc-theme-outline: rgb(139, 147, 145);
+  --mdc-theme-shadow: rgb(0, 0, 0);
+  --mdc-theme-inverse-surface: rgb(225, 227, 225);
+  --mdc-theme-inverse-on-surface: rgb(47, 49, 48);
+  --mdc-theme-inverse-primary: rgb(0, 107, 102);
+}
+
+@layer base {
+  * {
+    @apply border-[var(--mdc-theme-outline)] outline-[var(--mdc-theme-outline)];
+  }
+  body {
+    @apply bg-[var(--mdc-theme-background)] text-[var(--mdc-theme-on-surface)];
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+  }
+}
+
 /* Parallax and animation styles */
 .parallax {
   background-attachment: fixed;
   background-position: center;
   background-size: cover;
+}
+
+/* Custom Tailwind utilities */
+@layer utilities {
+  .bg-primary { background-color: var(--mdc-theme-primary); }
+  .text-primary { color: var(--mdc-theme-primary); }
+  .border-primary { border-color: var(--mdc-theme-primary); }
+  .bg-secondary { background-color: var(--mdc-theme-secondary); }
+  .text-secondary { color: var(--mdc-theme-secondary); }
+  .text-on-primary { color: var(--mdc-theme-on-primary); }
+  .text-on-secondary { color: var(--mdc-theme-on-secondary); }
+  .bg-surface { background-color: var(--mdc-theme-surface); }
+  .text-error { color: var(--mdc-theme-error); }
+  .text-text-secondary-on-background { color: var(--mdc-theme-on-surface-variant); }
 }

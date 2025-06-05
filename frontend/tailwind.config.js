@@ -7,14 +7,13 @@ export default {
         inter: ['Inter', 'sans-serif'],
       },
       colors: {
-        teal: {
-          600: '#0d9488',
-          700: '#0f766e',
-        },
-        slate: {
-          800: '#1e293b',
-          900: '#0f172a',
-        },
+        primary: 'var(--mdc-theme-primary)',
+        secondary: 'var(--mdc-theme-secondary)',
+        background: 'var(--mdc-theme-background)',
+        surface: 'var(--mdc-theme-surface)',
+        'on-primary': 'var(--mdc-theme-on-primary)',
+        'on-secondary': 'var(--mdc-theme-on-secondary)',
+        error: 'var(--mdc-theme-error)',
       },
     },
   },
