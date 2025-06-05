@@ -124,3 +124,10 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0;
 }
+
+/* Parallax and animation styles */
+.parallax {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}

@@ -4,6 +4,7 @@ import About from '../components/common/About.jsx';
 import Skills from '../components/common/Skills.jsx';
 import Projects from '../components/common/Projects.jsx';
 import Experience from '../components/common/Experience.jsx';
+import Education from '../components/common/Education.jsx';
 import Contact from '../components/common/Contact.jsx';
 import Footer from '../components/common/Footer.jsx';
 
@@ -16,6 +17,7 @@ function Home() {
       <Skills />
       <Projects />
       <Experience />
+      <Education />
       <Contact />
       <Footer />
     </div>

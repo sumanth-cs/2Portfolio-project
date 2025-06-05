@@ -1,23 +1,23 @@
 import { motion } from 'framer-motion';
 
-function Experience() {
-  const experiences = [
+function Education() {
+  const educations = [
     {
-      title: 'Senior Developer at Tech Corp',
-      period: '2020 - Present',
-      description: 'Led a team of developers to build scalable web applications using React and Node.js.',
+      title: 'B.Sc. Computer Science, XYZ University',
+      period: '2016 - 2020',
+      description: 'Graduated with honors, specializing in software engineering and web development.',
     },
     {
-      title: 'Junior Developer at Startup Inc.',
-      period: '2018 - 2020',
-      description: 'Developed front-end features using React and integrated RESTful APIs.',
+      title: 'High School Diploma, ABC School',
+      period: '2014 - 2016',
+      description: 'Focused on mathematics and computer science.',
     },
   ];
 
   return (
     <motion.section
-      id="experience"
-      className="py-20 bg-white"
+      id="education"
+      className="py-20 bg-gray-100"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -30,11 +30,11 @@ function Experience() {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          Experience
+          Education
         </motion.h2>
         <div className="relative">
           <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-red-700"></div>
-          {experiences.map((exp, index) => (
+          {educations.map((edu, index) => (
             <motion.div
               key={index}
               className={`mb-8 flex justify-between items-center w-full ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}
@@ -44,9 +44,9 @@ function Experience() {
             >
               <div className="w-5/12"></div>
               <div className="w-5/12 bg-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-xl font-semibold text-red-700">{exp.title}</h3>
-                <p className="text-gray-600 text-sm mb-2">{exp.period}</p>
-                <p className="text-gray-700">{exp.description}</p>
+                <h3 className="text-xl font-semibold text-red-700">{edu.title}</h3>
+                <p className="text-gray-600 text-sm mb-2">{edu.period}</p>
+                <p className="text-gray-700">{edu.description}</p>
               </div>
               <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-red-700 rounded-full"></div>
             </motion.div>
@@ -57,4 +57,4 @@ function Experience() {
   );
 }
 
-export default Experience;
+export default Education;
