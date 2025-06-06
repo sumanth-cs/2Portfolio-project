@@ -1,5 +1,5 @@
 // import { motion } from 'framer-motion';
-// import { Card, CardContent } from '../ui/card.jsx';
+// import { Card, CardContent } from '../components/ui/card.jsx';
 
 // function Skills() {
 //   const skills = [

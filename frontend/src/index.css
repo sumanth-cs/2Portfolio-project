@@ -131,7 +131,7 @@ body {
   background-position: center;
   background-size: cover;
 } */
-
+/* 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -206,14 +206,12 @@ body {
   }
 }
 
-/* Parallax and animation styles */
 .parallax {
   background-attachment: fixed;
   background-position: center;
   background-size: cover;
 }
 
-/* Custom Tailwind utilities */
 @layer utilities {
   .bg-primary { background-color: var(--mdc-theme-primary); }
   .text-primary { color: var(--mdc-theme-primary); }
@@ -225,4 +223,103 @@ body {
   .bg-surface { background-color: var(--mdc-theme-surface); }
   .text-error { color: var(--mdc-theme-error); }
   .text-text-secondary-on-background { color: var(--mdc-theme-on-surface-variant); }
+} */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&family=Poppins:wght@400;600;800&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --radius: 0.625rem;
+  --mdc-theme-primary-100: rgb(165, 250, 239);
+  --mdc-theme-primary-200: rgb(76, 218, 208);
+  --mdc-theme-primary-300: rgb(0, 107, 102);
+  --mdc-theme-on-primary: rgb(255, 255, 255);
+  --mdc-theme-secondary-100: rgb(208, 233, 237);
+  --mdc-theme-secondary-200: rgb(180, 205, 209);
+  --mdc-theme-secondary-300: rgb(53, 75, 79);
+  --mdc-theme-on-secondary: rgb(255, 255, 255);
+  --mdc-theme-tertiary-100: rgb(205, 227, 255);
+  --mdc-theme-tertiary-200: rgb(177, 199, 232);
+  --mdc-theme-tertiary-300: rgb(47, 69, 99);
+  --mdc-theme-on-tertiary: rgb(255, 255, 255);
+  --mdc-theme-background: rgb(251, 252, 250);
+  --mdc-theme-surface: rgb(251, 252, 250);
+  --mdc-theme-on-surface: rgb(26, 28, 27);
+  --mdc-theme-surface-variant: rgb(220, 228, 226);
+  --mdc-theme-on-surface-variant: rgb(65, 72, 71);
+  --mdc-theme-outline: rgb(114, 121, 119);
+}
+
+.dark {
+  --mdc-theme-primary-100: rgb(165, 250, 239);
+  --mdc-theme-primary-200: rgb(76, 218, 208);
+  --mdc-theme-primary-300: rgb(0, 107, 102);
+  --mdc-theme-on-primary: rgb(0, 55, 54);
+  --mdc-theme-secondary-100: rgb(208, 233, 237);
+  --mdc-theme-secondary-200: rgb(180, 205, 209);
+  --mdc-theme-secondary-300: rgb(53, 75, 79);
+  --mdc-theme-on-secondary: rgb(31, 53, 56);
+  --mdc-theme-tertiary-100: rgb(205, 227, 255);
+  --mdc-theme-tertiary-200: rgb(177, 199, 232);
+  --mdc-theme-tertiary-300: rgb(47, 69, 99);
+  --mdc-theme-on-tertiary: rgb(25, 47, 76);
+  --mdc-theme-background: rgb(26, 28, 27);
+  --mdc-theme-surface: rgb(26, 28, 27);
+  --mdc-theme-on-surface: rgb(225, 227, 225);
+  --mdc-theme-surface-variant: rgb(65, 72, 71);
+  --mdc-theme-on-surface-variant: rgb(193, 200, 198);
+  --mdc-theme-outline: rgb(139, 147, 145);
+}
+
+@layer base {
+  * {
+    @apply border-[var(--mdc-theme-outline)];
+  }
+  body {
+    @apply bg-[var(--mdc-theme-background)] text-[var(--mdc-theme-on-surface)];
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+  }
+  h3, h4 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+  }
+  button, a {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+  }
+  p, span {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+}
+
+/* Section-specific styles */
+section:nth-child(odd) {
+  @apply bg-[var(--mdc-theme-primary-100)];
+}
+section:nth-child(even) {
+  @apply bg-[var(--mdc-theme-secondary-100)];
+}
+
+/* Dynamic button and card styles */
+@layer utilities {
+  .bg-primary-100 { background-color: var(--mdc-theme-primary-100); }
+  .bg-primary-200 { background-color: var(--mdc-theme-primary-200); }
+  .bg-primary-300 { background-color: var(--mdc-theme-primary-300); }
+  .text-primary-100 { color: var(--mdc-theme-primary-100); }
+  .text-primary-200 { color: var(--mdc-theme-primary-200); }
+  .text-primary-300 { color: var(--mdc-theme-primary-300); }
+  .border-primary-200 { border-color: var(--mdc-theme-primary-200); }
+  .bg-secondary-100 { background-color: var(--mdc-theme-secondary-100); }
+  .bg-secondary-200 { background-color: var(--mdc-theme-secondary-200); }
+  .text-secondary-100 { color: var(--mdc-theme-secondary-100); }
+  .text-secondary-200 { color: var(--mdc-theme-secondary-200); }
+  .bg-tertiary-100 { background-color: var(--mdc-theme-tertiary-100); }
+  .bg-tertiary-200 { background-color: var(--mdc-theme-tertiary-200); }
 }

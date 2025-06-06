@@ -1,7 +1,7 @@
 // import { useState } from 'react';
 // import { motion } from 'framer-motion';
-// import { Card, CardContent } from '../ui/card.jsx';
-// import { Button } from '../ui/button.jsx';
+// import { Card, CardContent } from '../components/ui/card.jsx';
+// import { Button } from '../components/ui/button.jsx';
 
 // function Projects() {
 //   const projects = [

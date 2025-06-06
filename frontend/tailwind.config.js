@@ -1,19 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
+      colors: {
+        'primary-100': 'var(--mdc-theme-primary-100)',
+        'primary-200': 'var(--mdc-theme-primary-200)',
+        'primary-300': 'var(--mdc-theme-primary-300)',
+        'secondary-100': 'var(--mdc-theme-secondary-100)',
+        'secondary-200': 'var(--mdc-theme-secondary-200)',
+        'secondary-300': 'var(--mdc-theme-secondary-300)',
+        'tertiary-100': 'var(--mdc-theme-tertiary-100)',
+        'tertiary-200': 'var(--mdc-theme-tertiary-200)',
+        'tertiary-300': 'var(--mdc-theme-tertiary-300)',
+        surface: 'var(--mdc-theme-surface)',
+        'on-surface': 'var(--mdc-theme-on-surface)',
+      },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
-      },
-      colors: {
-        primary: 'var(--mdc-theme-primary)',
-        secondary: 'var(--mdc-theme-secondary)',
-        background: 'var(--mdc-theme-background)',
-        surface: 'var(--mdc-theme-surface)',
-        'on-primary': 'var(--mdc-theme-on-primary)',
-        'on-secondary': 'var(--mdc-theme-on-secondary)',
-        error: 'var(--mdc-theme-error)',
+        poppins: ['Poppins', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
       },
     },
   },
