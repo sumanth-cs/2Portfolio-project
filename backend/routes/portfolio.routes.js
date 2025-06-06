@@ -1,10 +1,15 @@
+/**
+ * Portfolio routes.
+ */
 import express from 'express';
-import { createPortfolioController, getPortfoliosController } from '../controllers/portfolio.controller.js';
+import { createUserPortfolio, getUserPortfolios, getUserPortfolio, updateUserPortfolio } from '../controllers/portfolio.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.post('/portfolio', authenticate, createPortfolioController);
-router.get('/portfolios', authenticate, getPortfoliosController);
+router.post('/', authenticate, createUserPortfolio);
+router.get('/', authenticate, getUserPortfolios);
+router.get('/:id', authenticate, getUserPortfolio);
+router.put('/:id', authenticate, updateUserPortfolio);
 
 export default router;

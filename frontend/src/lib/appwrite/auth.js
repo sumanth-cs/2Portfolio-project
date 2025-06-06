@@ -1,4 +1,4 @@
-import { signup, login, logout } from '../../api/auth.js';
+import { signup, login, logout } from '../../api/api.js';
 
 export const loginUser = login;
 export const signupUser = signup;

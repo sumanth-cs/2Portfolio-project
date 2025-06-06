@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { uploadMultipleFiles } from '../../lib/appwrite/storage.js';
+import { uploadFile } from '../../lib/appwrite/storage.js';
 import { Button } from '../ui/button.jsx';
 import { Input } from '../ui/input.jsx';
 import { Label } from '../ui/label.jsx';
@@ -17,7 +17,7 @@ function PhotoUpload() {
     e.preventDefault();
     setLoading(true);
     try {
-      const uploadedFiles = await uploadMultipleFiles(files);
+      const uploadedFiles = await uploadFile(files);
       alert(`Uploaded ${uploadedFiles.length} photos successfully!`);
       setFiles([]);
     } catch (error) {

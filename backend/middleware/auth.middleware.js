@@ -1,23 +1,20 @@
-import { account } from '../config/appwrite.js';
+/**
+ * JWT authentication middleware.
+ */
+import jwt from 'jsonwebtoken';
+import { config } from '../config/env.js';
 
 export const authenticate = async (req, res, next) => {
   try {
-    const user = await account.get();
-    req.userId = user.$id;
-    next();
-  } catch (error) {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
-};
-
-export const isAdmin = async (req, res, next) => {
-  try {
-    const user = await account.get();
-    if (!user.labels.includes('admin')) {
-      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    const token = req.header('Authorization').replace('Bearer ', '');
+    if (!token) {
+      throw new Error('Authentication required');
     }
+    const decoded = jwt.verify(token, config.jwtSecret);
+    req.userId = decoded.id;
+    req.isAdmin = decoded.isAdmin;
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ success: false, message: 'Invalid or missing token' });
   }
 };

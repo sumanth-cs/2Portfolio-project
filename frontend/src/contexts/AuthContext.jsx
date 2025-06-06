@@ -1,64 +1,87 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { loginUser, signupUser, logoutUser } from '../lib/appwrite/auth.js';
+/**
+ * Provides authentication context with JWT-based user session management.
+ */
+import { createContext, useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import { signup, login, logout, getCurrentUser } from '../api/api.js';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Check for existing session
-    const checkSession = async () => {
-      try {
-        const response = await fetch(`/api/auth/current`, {
-          credentials: 'include',
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-        }
-      } catch (error) {
-        console.error('Session check failed:', error);
-      } finally {
-        setLoading(false);
+  const checkSession = useCallback(async () => {
+    try {
+      const response = await getCurrentUser();
+      setUser(response.user);
+      setError(null);
+    } catch (err) {
+      // Handle 401 gracefully (user not logged in)
+      if (err.message.includes('401')) {
+        setUser(null);
+        localStorage.removeItem('token');
+      } else {
+        setError(err.message);
       }
-    };
-    checkSession();
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const login = async (email, password) => {
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
+
+  const loginUser = async (email, password) => {
     try {
-      const userData = await loginUser(email, password);
-      setUser(userData);
-      return userData;
-    } catch (error) {
-      throw error;
+      setError(null);
+      const response = await login(email, password);
+      localStorage.setItem('token', response.token);
+      setUser(response.user);
+      return response.user;
+    } catch (err) {
+      setError(err.message);
+      throw err;
     }
   };
 
-  const signup = async (name, email, password) => {
+  const signupUser = async (name, email, password) => {
     try {
-      const userData = await signupUser(name, email, password);
-      setUser(userData);
-      return userData;
-    } catch (error) {
-      throw error;
+      setError(null);
+      const response = await signup(name, email, password);
+      localStorage.setItem('token', response.token);
+      setUser(response.user);
+      return response.user;
+    } catch (err) {
+      setError(err.message);
+      throw err;
     }
   };
 
-  const logout = async () => {
+  const logoutUser = async () => {
     try {
-      await logoutUser();
+      setError(null);
+      await logout();
+      localStorage.removeItem('token');
       setUser(null);
-    } catch (error) {
-      console.error('Logout failed:', error);
+    } catch (err) {
+      setError('Logout failed');
+      console.error('Logout failed:', err);
+      throw err;
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, login: loginUser, signup: signupUser, logout: logoutUser, loading, error, checkSession }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

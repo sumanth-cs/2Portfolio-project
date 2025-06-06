@@ -1,10 +1,13 @@
+/**
+ * Bio routes.
+ */
 import express from 'express';
-import { updateBioController, getBioController } from '../controllers/bio.controller.js';
-import { authenticate, isAdmin } from '../middleware/auth.middleware.js';
+import { getUserBio, updateUserBio } from '../controllers/bio.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.put('/bio', authenticate, isAdmin, updateBioController);
-router.get('/bio', getBioController);
+router.get('/', authenticate, getUserBio);
+router.put('/', authenticate, updateUserBio);
 
 export default router;

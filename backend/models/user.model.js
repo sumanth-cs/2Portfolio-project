@@ -1,45 +1,32 @@
-import { account } from '../config/appwrite.js';
-import { ID } from 'appwrite';
+/**
+ * User model for MongoDB.
+ */
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { config } from '../config/env.js';
 
-export const createUser = async ({ name, email, password, isAdmin }) => {
-  try {
-    const user = await account.create(ID.unique(), email, password, name);
-    if (isAdmin) {
-      await account.updateLabels(user.$id, ['admin']);
-    }
-    return user;
-  } catch (error) {
-    throw new Error(`Failed to create user: ${error.message}`);
-  }
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  isAdmin: { type: Boolean, default: false },
+}, { timestamps: true });
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.methods.comparePassword = async function (password) {
+  return bcrypt.compare(password, this.password);
 };
 
-export const getUser = async (userId) => {
-  try {
-    const user = await account.get(userId);
-    return {
-      id: user.$id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.labels.includes('admin'),
-    };
-  } catch (error) {
-    throw new Error(`Failed to get user: ${error.message}`);
-  }
+userSchema.methods.generateToken = function () {
+  return jwt.sign({ id: this._id, isAdmin: this.isAdmin }, config.jwtSecret, {
+    expiresIn: '7d',
+  });
 };
 
-export const loginUser = async (email, password) => {
-  try {
-    await account.createEmailSession(email, password);
-    const user = await account.get();
-    return {
-      id: user.$id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.labels.includes('admin'),
-    };
-  } catch (error) {
-    throw new Error(`Failed to login: ${error.message}`);
-  }
-};
-
-
+export const User = mongoose.model('User', userSchema);

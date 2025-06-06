@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext.jsx';
-// import { getPortfolios } from '../lib/appwrite/database.js';
+import { getPortfolios } from '../api/portfolio.js';
 import Hero from '../components/common/Hero.jsx';
 import About from '../components/common/About.jsx';
 import Skills from '../components/common/Skills.jsx';
@@ -16,19 +16,26 @@ import Footer from '@/components/common/Footer.jsx';
 function Home() {
   const { user } = useContext(AuthContext);
   const [portfolios, setPortfolios] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      const fetchPortfolios = async () => {
-        try {
-          const data = await getPortfolios(user.id);
-          setPortfolios(data);
-        } catch (error) {
-          console.error('Failed to fetch portfolios:', error);
-        }
-      };
-      fetchPortfolios();
-    }
+    const fetchPortfolios = async () => {
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        const data = await getPortfolios();
+        setPortfolios(data);
+      } catch (err) {
+        setError(err.message);
+        console.error('Failed to fetch portfolios:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolios();
   }, [user]);
 
   return (
@@ -37,16 +44,22 @@ function Home() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <Header/>
+      <Header />
       <Hero />
       <About />
       <Skills />
       <Projects />
       <Experience />
       <Education />
-      {user && <PortfolioSection portfolios={portfolios} />}
+      {user && (
+        <PortfolioSection 
+          portfolios={portfolios} 
+          loading={loading} 
+          error={error} 
+        />
+      )}
       <Contact />
-      <Footer/>
+      <Footer />
     </motion.div>
   );
 }

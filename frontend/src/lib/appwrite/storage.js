@@ -1,79 +1,36 @@
-import { storage, ID, appwriteConfig } from './config';
-// import defaultImg from "../../assets/RHD-defaultImg.png"
+/**
+ * Handles file storage operations with Appwrite on the frontend.
+ */
+import { ID } from 'appwrite';
+import { appwriteConfig, storage } from './config';
 
-export const uploadFile = async (file) => {
+const DEFAULT_IMG = 'https://via.placeholder.com/200';
+
+export async function uploadFile(file) {
+  if (!file) {
+    throw new Error('No file provided');
+  }
   try {
-    if (!file) {
-      throw new Error('No file provided');
-    }
-
-    // //console.log('Uploading file to bucket:', appwriteConfig.bucketId);
     const uploadedFile = await storage.createFile(
       appwriteConfig.bucketId,
       ID.unique(),
       file
     );
-    // //console.log('File uploaded successfully:', uploadedFile.$id);
     return uploadedFile;
   } catch (error) {
     console.error('Upload failed:', error);
-    throw new Error(`Failed to upload file: ${error.message}`);
-  }
-};
-
-export const uploadMultipleFiles = async (files) => {
-  try {
-    if (!files || files.length === 0) {
-      throw new Error('No files provided');
-    }
-
-    const results = await Promise.all(
-      files.map(file => {
-        if (!file) {
-          console.warn('Skipping undefined file');
-          return null;
-        }
-        return uploadFile(file);
-      })
-    );
-
-    return results.filter(result => result !== null);
-  } catch (error) {
-    console.error('Multiple upload failed:', error);
-    throw error;
-  }
-};
-
-export function getFileView(fileId) {
-
-  if (!fileId) return defaultImg;
-
-  try {
-    const fileUrl = storage.getFileView(
-      appwriteConfig.bucketId,
-      fileId
-    );
-    return fileUrl || defaultImg;
-  } catch (error) {
-    console.error("Error getting file view:", error);
-    return defaultImg;
+    throw new Error(`Failed to upload file: ${error.message || 'unknown error'}`);
   }
 }
 
-// Similar for preview if needed
-export function getFilePreview(fileId, width = 200, height = 200) {
+export function getFileView(fileId) {
+  if (!fileId) return DEFAULT_IMG;
   try {
-    const fileUrl = storage.getFilePreview(
-      appwriteConfig.bucketId,
-      fileId,
-      width,
-      height
-    );
-    if (!fileUrl) throw new Error("Failed to generate preview URL");
-    return fileUrl;
+    const fileUrl = storage.getFileView(appwriteConfig.bucketId, fileId);
+    return fileUrl?.href || DEFAULT_IMG;
   } catch (error) {
-    console.error("Error getting file preview:", error);
-    return null;
+    console.error('Error getting file view:', error);
+    return DEFAULT_IMG;
   }
 }
 
@@ -81,7 +38,7 @@ export async function deleteFile(fileId) {
   try {
     await storage.deleteFile(appwriteConfig.bucketId, fileId);
   } catch (error) {
-    console.error("Delete file failed:", error);
+    console.error('Delete file failed:', error);
     throw error;
   }
 }

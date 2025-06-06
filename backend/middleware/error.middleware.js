@@ -1,7 +1,12 @@
-export default (error, req, res, next) => {
-  console.error(error.stack);
-  res.status(error.status || 500).json({
+/**
+ * middleware Global Error handling.
+ */
+export const errorMiddleware = (error, req, res, next) => {
+  console.error('Error:', error);
+  const statusCode = error.statusCode || 500;
+  res.status(statusCode).json({
     success: false,
-    error: error.message || 'Internal Server Error',
+    statusCode,
+    message: error.message || 'Internal Server Error',
   });
 };

@@ -1,32 +1,30 @@
+/**
+ * Loads and validates environment variables.
+ */
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const requiredEnv = [
-  'APPWRITE_ENDPOINT',
-  'APPWRITE_PROJECT_ID',
-  'APPWRITE_API_KEY',
-  'APPWRITE_DATABASE_ID',
-  'APPWRITE_BIO_COLLECTION_ID',
-  'APPWRITE_PORTFOLIO_COLLECTION_ID',
-  'APPWRITE_BUCKET_ID',
+  'MONGO_URI',
+  'JWT_SECRET',
+  'FRONTEND_URL',
 ];
 
-requiredEnv.forEach((env) => {
-  if (!process.env[env]) {
-    throw new Error(`Missing required environment variable: ${env}`);
-  }
-});
+const missingEnv = requiredEnv.filter((env) => !process.env[env]);
+
+if (missingEnv.length > 0) {
+  throw new Error(`Missing required environment variables: ${missingEnv.join(', ')}`);
+}
 
 export const config = {
-  appwrite: {
-    endpoint: process.env.APPWRITE_ENDPOINT,
-    projectId: process.env.APPWRITE_PROJECT_ID,
-    apiKey: process.env.API_KEY_WRITE,
-    databaseId: process.env.APPWRITE_DATABASE_ID,
-    bioCollectionId: process.env.APPWRITE_BIORE_COLLECTION_ID,
-    portfolioCollectionId: process.env.APPWRITE_PORTFOLIO_COLLECTION_ID,
-    bucketId: process.env.APPWRITE_BUCKET,
-  },
+  mongoUri: process.env.MONGO_URI,
+  jwtSecret: process.env.JWT_SECRET,
+  frontendUrl: process.env.FRONTEND_URL,
   port: process.env.PORT || 5000,
 };

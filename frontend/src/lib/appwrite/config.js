@@ -1,21 +1,19 @@
-import { Client, Storage, ID } from 'appwrite';
+/**
+ * Appwrite configuration for frontend file storage.
+ */
+import { Client, Storage } from 'appwrite';
 
-// Initialize the Appwrite client
-const client = new Client()
-  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
-  .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
-
-// Initialize Storage
-const storage = new Storage(client);
-
-// Appwrite configuration
-const appwriteConfig = {
+export const appwriteConfig = {
+  url: import.meta.env.VITE_APPWRITE_URL,
+  projectId: import.meta.env.VITE_APPWRITE_PROJECT_ID,
   bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
 };
 
-export { 
-  client, 
-  storage,
-  ID,
-  appwriteConfig 
-};
+if (!appwriteConfig.url || !appwriteConfig.projectId || !appwriteConfig.bucketId) {
+  throw new Error('Missing required Appwrite environment variables');
+}
+
+const client = new Client();
+client.setEndpoint(appwriteConfig.url).setProject(appwriteConfig.projectId);
+
+export const storage = new Storage(client);
