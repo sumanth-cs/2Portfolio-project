@@ -4,11 +4,11 @@ module.exports = {
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: 'var(--primary)',
-        accent: 'var(--accent)',
         'text-primary-on-background': 'var(--text-color)',
         'text-secondary-on-background': 'var(--text-color)',
         surface: 'var(--bg-color)',

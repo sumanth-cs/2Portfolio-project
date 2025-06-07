@@ -14,8 +14,8 @@ export const getUserTheme = async (req, res, next) => {
 
 export const updateUserTheme = async (req, res, next) => {
   try {
-    const { primary, secondary, accent, neutral } = req.body;
-    const theme = await updateTheme(req.userId, { primary, secondary, accent, neutral });
+    const { primary, 'text-color': textColor, 'bg-color': bgColor } = req.body;
+    const theme = await updateTheme(req.userId, { primary, 'text-color': textColor, 'bg-color': bgColor });
     res.status(200).json({ success: true, theme });
   } catch (error) {
     next(error);

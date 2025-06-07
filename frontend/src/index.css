@@ -46,21 +46,18 @@
 section {
   @apply bg-surface;
 } */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap');
 @import "tailwindcss";
 
 :root {
   --primary: #2563eb;
-  --secondary: #2196f3;
-  --bg-color: #ffffff;
   --text-color: #000000;
+  --bg-color: #ffffff;
 }
 
 .dark {
-  --primary-color: #333333;
-  --secondary-color: #333333;
-  --text-color: #fff;
+  --primary: #2563eb;
+  --text-color: #ffffff;
   --bg-color: #1f2937;
 }
 
@@ -74,19 +71,11 @@ section {
     color: var(--text-color);
     font-family: 'Inter', sans-serif;
   }
-  h2 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
     font-weight: bold;
   }
-  h3 {
-    font-family: font-poppins;
-  }
-  button {
-    font-family: 'Poppins', sans-serif;
-    font-weight: medium;
-  }
-  a {
-    font-family: 'Poppins', sans-serif;
-    font-weight: medium;
+  button, a {
+    font-family: 'Inter', sans-serif;
   }
 }

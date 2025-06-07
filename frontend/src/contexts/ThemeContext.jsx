@@ -8,7 +8,8 @@ export const ThemeProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const [colors, setColors] = useState({
     primary: '#2563eb',
-    accent: '#10b981',
+    'text-color': '#000000',
+    'bg-color': '#ffffff',
   });
   const [isDark, setIsDark] = useState(
     localStorage.getItem('themeMode') === 'dark' ||
@@ -20,12 +21,12 @@ export const ThemeProvider = ({ children }) => {
       if (user) {
         try {
           const response = await getTheme();
-          if (response.theme) {
-            setColors({
-              primary: response.theme.primary || '#2563eb',
-              accent: response.theme.accent || '#10b981',
-            });
-          }
+          const theme = response.theme || {};
+          setColors({
+            primary: theme.primary || '#2563eb',
+            'text-color': theme['text-color'] || '#000000',
+            'bg-color': theme['bg-color'] || '#ffffff',
+          });
         } catch (error) {
           console.error('Error fetching theme:', error);
         }
@@ -37,9 +38,8 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--primary', colors.primary);
-    root.style.setProperty('--accent', colors.accent);
-    root.style.setProperty('--text-color', isDark ? '#ffffff' : '#000000');
-    root.style.setProperty('--bg-color', isDark ? '#1f2937' : '#ffffff');
+    root.style.setProperty('--text-color', colors['text-color']);
+    root.style.setProperty('--bg-color', colors['bg-color']);
     root.classList.toggle('dark', isDark);
     localStorage.setItem('themeMode', isDark ? 'dark' : 'light');
   }, [colors, isDark]);
