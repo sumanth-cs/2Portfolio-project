@@ -16,7 +16,8 @@ export async function uploadFile(file) {
       ID.unique(),
       file
     );
-    return uploadedFile;
+    const fileUrl = storage.getFileView(appwriteConfig.bucketId, uploadedFile.$id).href;
+    return fileUrl;
   } catch (error) {
     console.error('Upload failed:', error);
     throw new Error(`Failed to upload file: ${error.message || 'unknown error'}`);

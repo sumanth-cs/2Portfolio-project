@@ -1,52 +1,32 @@
-// /**
-//  * Bio model for MongoDB.
-//  */
-// import mongoose from 'mongoose';
-
-// const bioSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   content: { type: String, required: true },
-//   profileImage: { type: String },
-// }, { timestamps: true });
-
-// export const Bio = mongoose.model('Bio', bioSchema);
-
 /**
  * Bio model for MongoDB.
  */
 import mongoose from 'mongoose';
 
 const bioSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  content: { type: String, required: true },
-  profileImage: { type: String },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  name: { type: String, required: true },
+  title: { type: String, required: true },
+  bio: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String },
+  skills: [{ name: String, level: Number }],
+  education: [{ degree: String, institution: String, period: String }],
+  experience: [{ title: String, company: String, period: String, description: String }],
+  social: [{ name: String, link: String }],
 }, { timestamps: true });
 
 const Bio = mongoose.model('Bio', bioSchema);
 
-export const getBio = async (userId) => {
-  try {
-    const bio = await Bio.findOne({ userId }).lean();
-    if (!bio) {
-      throw new Error('Bio not found');
-    }
-    return bio;
-  } catch (error) {
-    throw new Error(`Failed to get bio: ${error.message}`);
-  }
+export const createBio = async (userId, bioData) => {
+  const bio = new Bio({ userId, ...bioData });
+  return await bio.save();
 };
 
-export const updateBio = async (userId, content, profileImage) => {
-  try {
-    const bio = await Bio.findOneAndUpdate(
-      { userId },
-      { content, profileImage, updatedAt: new Date() },
-      { new: true, upsert: true }
-    );
-    return bio;
-  } catch (error) {
-    throw new Error(`Failed to update bio: ${error.message}`);
-  }
+export const getBioByUserId = async (userId) => {
+  return await Bio.findOne({ userId });
 };
 
-export default Bio;
+export const updateBio = async (userId, bioData) => {
+  return await Bio.findOneAndUpdate({ userId }, bioData, { new: true, upsert: true });
+};

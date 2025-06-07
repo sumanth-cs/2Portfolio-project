@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { uploadFile } from '../../lib/appwrite/storage.js';
+import { uploadFile } from '@/lib/appwrite/storage.js';
 import { Button } from '../ui/button.jsx';
 import { Input } from '../ui/input.jsx';
 import { Label } from '../ui/label.jsx';
+import { toast } from 'react-hot-toast';
 
-function PhotoUpload() {
+function PhotoUpload({ onSave }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -17,11 +18,12 @@ function PhotoUpload() {
     e.preventDefault();
     setLoading(true);
     try {
-      const uploadedFiles = await uploadFile(files);
-      alert(`Uploaded ${uploadedFiles.length} photos successfully!`);
+      const uploadedUrls = await Promise.all(files.map(file => uploadFile(file)));
+      toast.success(`Uploaded ${uploadedUrls.length} photos successfully!`);
       setFiles([]);
+      onSave(uploadedUrls);
     } catch (error) {
-      alert(`Failed to upload photos: ${error.message}`);
+      toast.error(`Failed to upload photos: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -29,12 +31,11 @@ function PhotoUpload() {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-tertiary-100 p-6 rounded-lg shadow-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6"
     >
-      <h3 className="text-2xl font-bold text-primary-300 mb-4">Upload Photos</h3>
+      <h3 className="text-2xl font-bold text-primary-300">Upload Photos</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="photos">Select Photos</Label>
@@ -44,10 +45,9 @@ function PhotoUpload() {
             multiple
             accept="image/*"
             onChange={handleFileChange}
-            className="bg-surface"
           />
         </div>
-        <Button type="submit" disabled={loading || files.length === 0} className="bg-primary-200 hover:bg-primary-300">
+        <Button type="submit" disabled={loading || files.length === 0}>
           {loading ? 'Uploading...' : 'Upload Photos'}
         </Button>
       </form>

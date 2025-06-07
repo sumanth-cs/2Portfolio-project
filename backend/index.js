@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes.js';
 import bioRoutes from './routes/bio.routes.js';
 import portfolioRoutes from './routes/portfolio.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -26,14 +27,23 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
 }));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/bio', bioRoutes);
 app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(400).json({
+      success: false,
+      message: err.message,
+      details: err.errors || {},
+    });
+  }
   const status = err.statusCode || 500;
   res.status(status).json({
     success: false,

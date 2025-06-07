@@ -1,12 +1,25 @@
 /**
  * Bio controller for handling bio-related operations.
  */
-import { getBio, updateBio } from '../models/bio.model.js';
+import { createBio, getBioByUserId, updateBio } from '../models/bio.model.js';
+
+export const createUserBio = async (req, res, next) => {
+  try {
+    const { name, title, bio, email, phone, skills, education, experience, social } = req.body;
+    if (!name || !title || !bio || !email) {
+      return res.status(400).json({ success: false, message: 'Required fields missing' });
+    }
+    const newBio = await createBio(req.userId, { name, title, bio, email, phone, skills, education, experience, social });
+    res.status(201).json({ success: true, bio: newBio });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getUserBio = async (req, res, next) => {
   try {
-    const bio = await getBio(req.userId);
-    res.status(200).json({ success: true, bio });
+    const bio = await getBioByUserId(req.userId);
+    res.status(200).json({ success: true, bio: bio || {} });
   } catch (error) {
     next(error);
   }
@@ -14,12 +27,12 @@ export const getUserBio = async (req, res, next) => {
 
 export const updateUserBio = async (req, res, next) => {
   try {
-    const { content, profileImage } = req.body;
-    if (!content) {
-      return res.status(400).json({ success: false, message: 'Content is required' });
+    const { name, title, bio, email, phone, skills, education, experience, social } = req.body;
+    if (!name || !title || !bio || !email) {
+      return res.status(400).json({ success: false, message: 'Required fields missing' });
     }
-    const bio = await updateBio(req.userId, content, profileImage);
-    res.status(200).json({ success: true, bio });
+    const updatedBio = await updateBio(req.userId, { name, title, bio, email, phone, skills, education, experience, social });
+    res.status(200).json({ success: true, bio: updatedBio });
   } catch (error) {
     next(error);
   }

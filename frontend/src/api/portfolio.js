@@ -1,13 +1,27 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_BACKEND_URL;
+/**
+ * API functions for portfolio operations.
+ */
+import { apiFetch } from './api.js';
 
 export const createPortfolio = async (portfolioData) => {
-  const response = await axios.post(`${API_URL}/api/portfolio`, portfolioData, { withCredentials: true });
-  return response.data.portfolio;
+  const response = await apiFetch('/api/portfolio', {
+    method: 'POST',
+    body: JSON.stringify(portfolioData),
+  });
+  return response.portfolio;
 };
 
 export const getPortfolios = async () => {
-  const response = await axios.get(`${API_URL}/api/portfolios`, { withCredentials: true });
-  return response.data.portfolios;
+  const response = await apiFetch('/api/portfolio', {
+    method: 'GET',
+  });
+  return response.portfolios;
+};
+
+export const updatePortfolio = async (portfolioData) => {
+  const response = await apiFetch('/api/portfolio', {
+    method: 'PUT',
+    body: JSON.stringify(portfolioData),
+  });
+  return response.portfolio;
 };

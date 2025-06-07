@@ -1,13 +1,19 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_BACKEND_URL;
+/**
+ * API functions for bio operations.
+ */
+import { apiFetch } from './api.js';
 
 export const updateBio = async (bioData) => {
-  const response = await axios.put(`${API_URL}/api/bio`, bioData, { withCredentials: true });
-  return response.data.bio;
+  const response = await apiFetch('/api/bio', {
+    method: 'PUT',
+    body: JSON.stringify(bioData),
+  });
+  return response.bio;
 };
 
 export const getBio = async () => {
-  const response = await axios.get(`${API_URL}/api/bio`);
-  return response.data.bio;
+  const response = await apiFetch('/api/bio', {
+    method: 'GET',
+  });
+  return response.bio;
 };

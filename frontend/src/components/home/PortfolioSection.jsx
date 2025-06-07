@@ -1,30 +1,9 @@
 /**
  * Portfolio section displaying user projects.
  */
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { apiFetch } from '../../api/api.js';
-import PropTypes from 'prop-types';
 
-function PortfolioSection() {
-  const [portfolios, setPortfolios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchPortfolios = async () => {
-      try {
-        const response = await apiFetch('/api/portfolio');
-        setPortfolios(response.portfolios || []); // Ensure portfolios is an array
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || 'Failed to load portfolios');
-        setLoading(false);
-      }
-    };
-    fetchPortfolios();
-  }, []);
-
+function PortfolioSection({ portfolios, loading, error }) {
   if (loading) {
     return <div className="text-center py-8">Loading...</div>;
   }
@@ -50,21 +29,28 @@ function PortfolioSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {portfolios.map((portfolio, index) => (
               <motion.div
-                key={portfolio._id || `portfolio-${index}`} // Unique key
+                key={portfolio._id || `portfolio-${index}`}
                 whileHover={{ scale: 1.05 }}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
               >
                 <img
-                  src={portfolio.images[0] || 'https://picsum.photos/300/200'} // Fallback image
+                  src={portfolio.image || 'https://picsum.photos/300/200'}
                   alt={portfolio.title}
                   className="w-full h-48 object-cover"
-                  onError={(e) => (e.target.src = '/fallback-image.jpg')} // Local fallback
+                  onError={(e) => (e.target.src = '/fallback-image.jpg')}
                 />
                 <div className="p-4">
                   <h3 className="text-xl font-semibold">{portfolio.title}</h3>
                   <p className="text-gray-600 dark:text-gray-400 mt-2">
                     {portfolio.description || 'No description available'}
                   </p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {portfolio.tags?.map((tag, tagIndex) => (
+                      <span key={tagIndex} className="px-2 py-1 bg-primary-200 text-white rounded text-sm">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -74,7 +60,5 @@ function PortfolioSection() {
     </motion.section>
   );
 }
-
-PortfolioSection.propTypes = {};
 
 export default PortfolioSection;

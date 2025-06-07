@@ -1,39 +1,79 @@
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext.jsx';
-import { createPortfolio } from '../../api/portfolio.js';
-import { uploadFile } from '../../lib/appwrite/storage.js';
+import { createPortfolio, updatePortfolio, getPortfolios } from '../../api/portfolio.js';
+import { uploadFile } from '@/lib/appwrite/storage.js';
 import { Input } from '../ui/input.jsx';
 import { Label } from '../ui/label.jsx';
 import { Textarea } from '../ui/textarea.jsx';
 import { Button } from '../ui/button.jsx';
+import { toast } from 'react-hot-toast';
 
-function PortfolioForm() {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+function PortfolioForm({ onSave }) {
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [existingPortfolio, setExistingPortfolio] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState('');
+
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        const portfolios = await getPortfolios();
+        if (portfolios.length > 0) {
+          const portfolio = portfolios[0];
+          setExistingPortfolio(portfolio);
+          setValue('title', portfolio.title);
+          setValue('description', portfolio.description);
+          setTags(portfolio.tags || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch portfolio:', error);
+      }
+    };
+    if (user) fetchPortfolio();
+  }, [user, setValue]);
+
+  const handleAddTag = () => {
+    if (newTag.trim()) {
+      setTags([...tags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  const handleRemoveTag = (index) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      let photoId = null;
-      if (data.photo[0]) {
-        const uploadedFile = await uploadFile(data.photo[0]);
-        photoId = uploadedFile.$id;
+      let imageUrl = existingPortfolio?.image;
+      if (data.image[0]) {
+        imageUrl = await uploadFile(data.image[0]);
       }
       const portfolioData = {
-        userId: user.id,
         title: data.title,
         description: data.description,
-        photoId,
+        image: imageUrl || '', // Ensure image is a string
+        tags,
       };
-      await createPortfolio(portfolioData);
-      alert('Portfolio created successfully!');
+      let portfolio;
+      if (existingPortfolio) {
+        portfolio = await updatePortfolio({ ...portfolioData, id: existingPortfolio._id });
+        toast.success('Portfolio updated successfully!');
+      } else {
+        portfolio = await createPortfolio(portfolioData);
+        toast.success('Portfolio created successfully!');
+      }
       reset();
+      setTags([]);
+      setExistingPortfolio(portfolio);
+      onSave(portfolio);
     } catch (error) {
-      alert(`Failed to create portfolio: ${error.message}`);
-      console.error('Portfolio creation failed:', error);
+      toast.error(`Failed to save portfolio: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -41,19 +81,17 @@ function PortfolioForm() {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-secondary-200 p-6 rounded-lg shadow-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6"
     >
-      <h3 className="text-2xl font-bold text-primary-300 mb-4">Create</h3>
+      <h3 className="text-2xl font-bold text-primary-300">{existingPortfolio ? 'Edit' : 'Create'} Portfolio</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label htmlFor="title">Portfolio Title</Label>
           <Input
             id="title"
             {...register('title', { required: 'Title is required' })}
-            className="bg-surface"
           />
           {errors.title && <p className="text-error text-sm">{errors.title.message}</p>}
         </div>
@@ -62,22 +100,48 @@ function PortfolioForm() {
           <Textarea
             id="description"
             {...register('description', { required: 'Description is required' })}
-            className="bg-surface"
           />
-          {errors.description && <p className="text-error text-sm">{errors.description?.message}</p>}
+          {errors.description && <p className="text-error text-sm">{errors.description.message}</p>}
         </div>
         <div>
-          <Label htmlFor="photo">Portfolio Photo</Label>
+          <Label htmlFor="image">Portfolio Image</Label>
+          {existingPortfolio?.image && (
+            <img src={existingPortfolio.image} alt="Preview" className="w-32 h-32 object-cover mb-2" />
+          )}
           <Input
-            id="photo"
+            id="image"
             type="file"
             accept="image/*"
-            {...register('photo')}
-            className="bg-surface"
+            {...register('image')}
           />
         </div>
-        <Button type="submit" disabled={loading} className="bg-primary-200 hover:bg-primary-300">
-          {loading ? 'Creating...' : 'Create Portfolio'}
+        <div>
+          <Label>Tags</Label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.map((tag, index) => (
+              <div key={index} className="flex items-center gap-1 px-2 py-1 bg-primary-200 text-white rounded">
+                {tag}
+                <button type="button" onClick={() => handleRemoveTag(index)}>×</button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Input
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              placeholder="Add tag and press Enter"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+            />
+            <Button type="button" onClick={handleAddTag}>Add Tag</Button>
+          </div>
+        </div>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Saving...' : existingPortfolio ? 'Update Portfolio' : 'Create Portfolio'}
         </Button>
       </form>
     </motion.section>
