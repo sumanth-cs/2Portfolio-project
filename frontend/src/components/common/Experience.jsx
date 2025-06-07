@@ -1,54 +1,94 @@
 import { motion } from 'framer-motion';
-import { Calendar } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
+
+const timelineItem = {
+  hidden: { opacity: 0, y: 20 },
+  show: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.5,
+    },
+  }),
+};
 
 function Experience({ experiences, loading }) {
   if (loading) {
-    return <div className="text-center py-16">Loading...</div>;
+    return (
+      <section id="experience" className="py-20 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Loading experience...</div>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <motion.section
-      id="experience"
-      className="py-16 bg-surface"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.h2
-          className="text-4xl font-bold text-center text-primary mb-12"
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
+    <section id="experience" className="py-20 bg-white dark:bg-gray-900">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-16"
         >
-          Experience
-        </motion.h2>
-        <div className="relative">
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-primary"></div>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-display">
+            Professional Experience
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            My career journey and professional milestones
+          </p>
+        </motion.div>
+
+        <div className="relative max-w-3xl mx-auto">
+          {/* Timeline line */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200 dark:bg-gray-700" />
+          
           {experiences.map((exp, index) => (
             <motion.div
-              key={`exp-${index}`}
-              className={`mb-8 flex justify-between items-center w-full ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}
-              initial={{ x: index % 2 === 0 ? 50 : -50, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
+              key={index}
+              custom={index}
+              variants={timelineItem}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-50px" }}
+              className={`mb-8 flex ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}
             >
-              <div className="w-5/12"></div>
-              <div className="w-5/12 bg-surface p-6 rounded-lg shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-5 h-5 text-primary" />
-                  <p className="text-sm text-text-secondary-on-background">{exp.period}</p>
-                </div>
-                <h3 className="text-xl font-semibold text-primary">{exp.title} at {exp.company}</h3>
-                <p className="text-text-primary-on-background">{exp.description || 'No description provided.'}</p>
+              <div className="w-5/12 px-4">
+                {/* Empty space for alternating layout */}
               </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rounded-full"></div>
+              
+              {/* Timeline dot */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary-500 border-4 border-white dark:border-gray-900 z-10" />
+              
+              <div className="w-5/12 px-4">
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300">
+                      <Briefcase className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {exp.period}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                    {exp.title}
+                  </h3>
+                  <p className="text-primary-600 dark:text-primary-400 mb-3">
+                    {exp.company}
+                  </p>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    {exp.description || 'No description provided.'}
+                  </p>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
