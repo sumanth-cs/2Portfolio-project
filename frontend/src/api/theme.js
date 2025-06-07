@@ -4,7 +4,7 @@ export const getTheme = async () => {
   const res = await apiFetch('/api/theme', {
     method: 'GET',
   });
-  return res; 
+  return res;
 };
 
 export const updateTheme = async (colors) => {

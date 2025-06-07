@@ -1,40 +1,52 @@
 // frontend/src/contexts/ThemeContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { AuthContext } from './AuthContext.jsx';
 import { getTheme, updateTheme } from '../api/theme.js';
 
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const { user } = useContext(AuthContext);
-  const [isDark, setIsDark] = useState(() => {
-    // Check local storage first, then system preference
-    const localPreference = localStorage.getItem('theme');
-    if (localPreference) return localPreference === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [colors, setColors] = useState({
+    text: '#000000',
+    background: '#ffffff'
   });
-
-  // Apply theme class to document element
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
-
-  const toggleTheme = () => {
-    setIsDark(!isDark);
+  
+  const fetchTheme = async () => {
+    try {
+      const theme = await getTheme();
+      if (theme) {
+        setColors({
+          text: theme['text-color'] || '#000000',
+          background: theme['bg-color'] || '#ffffff'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching theme:', error);
+    }
   };
 
+  const updateColors = async (newColors) => {
+    try {
+      const updated = await updateTheme(newColors);
+      setColors(prev => ({
+        ...prev,
+        ...newColors
+      }));
+      return updated;
+    } catch (error) {
+      console.error('Error updating theme:', error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchTheme();
+  }, []);
+
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ colors, updateColors }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
+export const useTheme = () => useContext(ThemeContext);

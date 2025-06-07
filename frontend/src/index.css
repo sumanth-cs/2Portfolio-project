@@ -46,6 +46,7 @@
 section {
   @apply bg-surface;
 } */
+/*  
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap');
 @import "tailwindcss";
 
@@ -77,5 +78,120 @@ section {
   }
   button, a {
     font-family: 'Inter', sans-serif;
+  }
+} */
+
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --text-color: #000000;
+  --bg-color: #ffffff;
+}
+
+.dark {
+  --text-color: #ffffff;
+  --bg-color: #1f2937;
+}
+
+@layer base {
+  * {
+    border-color: gray-300;
+    @apply dark:border-gray-700;
+  }
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+  }
+  button, a {
+    font-family: 'Inter', sans-serif;
+  }
+  section {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+}
+
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+section {
+  padding-top: 4vh;
+  height: 96vh;
+  margin: 0 10rem;
+  box-sizing: border-box;
+  min-height: fit-content;
+}
+
+.btn {
+  font-weight: 600;
+  transition: all 300ms ease;
+  padding: 1rem;
+  width: 8rem;
+  border-radius: 2rem;
+}
+
+.btn-color-1,
+.btn-color-2 {
+  border: var(--text-color) 0.1rem solid;
+}
+
+.btn-color-1:hover,
+.btn-color-2:hover {
+  cursor: pointer;
+}
+
+.btn-color-1:hover,
+.btn-color-2:hover {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+.btn-color-2:hover {
+  border: var(--bg-color) 0.1rem solid;
+}
+
+/* Media Queries */
+@media screen and (max-width: 1400px) {
+  section {
+    margin: 0 5%;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  section {
+    height: fit-content;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  section {
+    margin: 0 3%;
   }
 }

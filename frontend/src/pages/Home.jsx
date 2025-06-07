@@ -1,4 +1,3 @@
-// frontend/src/pages/Home.jsx
 import { useContext, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../contexts/AuthContext.jsx';
@@ -22,7 +21,6 @@ function Home() {
   const [educations, setEducations] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sectionColors, setSectionColors] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,76 +30,45 @@ function Home() {
           getBio(),
           getProjects(),
         ]);
-        
         setBio({
           name: bioData.name || 'Your Name',
           title: bioData.title || 'Your Title',
           description: bioData.bio || 'Add your bio in the admin panel',
           image: bioData.image || '/src/assets/profile.jpg',
         });
-        
         setSkills(bioData.skills || []);
         setExperiences(bioData.experience || []);
         setEducations(bioData.education || []);
         setProjects(projectData || []);
-        
-        // Set section colors from backend or default
-        setSectionColors(bioData.sectionColors || [
-          'bg-white dark:bg-gray-950',
-          'bg-gray-50 dark:bg-gray-900',
-          'bg-white dark:bg-gray-950',
-          'bg-gray-50 dark:bg-gray-900',
-          'bg-white dark:bg-gray-950',
-          'bg-gray-50 dark:bg-gray-900',
-        ]);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    
     fetchData();
   }, [user]);
 
   return (
-    <div className="relative">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="relative"
+      style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}
+    >
       <Header />
-      
       <div className="pt-16">
         <Hero bio={bio} />
-        
-        <About bio={bio} className={sectionColors[0] || 'bg-white dark:bg-gray-950'} />
-        
-        <Skills 
-          skills={skills} 
-          loading={loading} 
-          className={sectionColors[1] || 'bg-gray-50 dark:bg-gray-900'} 
-        />
-        
-        <Experience 
-          experiences={experiences} 
-          loading={loading} 
-          className={sectionColors[2] || 'bg-white dark:bg-gray-950'} 
-        />
-        
-        <Education 
-          educations={educations} 
-          loading={loading} 
-          className={sectionColors[3] || 'bg-gray-50 dark:bg-gray-900'} 
-        />
-        
-        <Projects 
-          projects={projects} 
-          loading={loading} 
-          className={sectionColors[4] || 'bg-white dark:bg-gray-950'} 
-        />
-        
-        <Contact className={sectionColors[5] || 'bg-gray-50 dark:bg-gray-900'} />
-        
+        <About bio={bio} />
+        <Skills skills={skills} loading={loading} />
+        <Experience experiences={experiences} loading={loading} />
+        <Education educations={educations} loading={loading} />
+        <Projects projects={projects} loading={loading} />
+        <Contact />
         <Footer />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
