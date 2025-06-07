@@ -1,3 +1,4 @@
+// frontend/src/pages/Home.jsx
 import { useContext, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../contexts/AuthContext.jsx';
@@ -13,53 +14,15 @@ import Projects from '../components/common/Projects.jsx';
 import Contact from '../components/common/Contact.jsx';
 import Footer from '../components/common/Footer.jsx';
 
-const staticData = {
-  bio: {
-    name: 'John Doe',
-    title: 'Full-Stack Developer',
-    bio: 'Passionate about building user-friendly and scalable web applications.',
-    image: 'https://picsum.photos/200',
-  },
-  skills: [
-    { name: 'JavaScript', level: 90 },
-    { name: 'React', level: 85 },
-  ],
-  experiences: [
-    {
-      title: 'Senior Developer',
-      company: 'Tech Corp',
-      period: '2020 - Present',
-      description: 'Led a team to build scalable web applications.',
-    },
-  ],
-  educations: [
-    {
-      degree: 'B.Sc. Computer Science',
-      institution: 'XYZ University',
-      period: '2016 - 2020',
-    },
-  ],
-  projects: [
-    {
-      _id: 'static1',
-      title: 'Sample Project',
-      description: 'A showcase of modern web development techniques.',
-      image: 'https://picsum.photos/300/200',
-      tags: ['React', 'Node.js'],
-      liveUrl: 'https://example.com',
-      codeUrl: 'https://github.com/example',
-    },
-  ],
-};
-
 function Home() {
   const { user } = useContext(AuthContext);
-  const [bio, setBio] = useState(staticData.bio);
-  const [skills, setSkills] = useState(staticData.skills);
-  const [experiences, setExperiences] = useState(staticData.experiences);
-  const [educations, setEducations] = useState(staticData.educations);
-  const [projects, setProjects] = useState(staticData.projects);
+  const [bio, setBio] = useState({});
+  const [skills, setSkills] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [educations, setEducations] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sectionColors, setSectionColors] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,43 +32,76 @@ function Home() {
           getBio(),
           getProjects(),
         ]);
+        
         setBio({
-          name: bioData.name || staticData.bio.name,
-          title: bioData.title || staticData.bio.title,
-          description: bioData.bio || staticData.bio.bio,
-          image: bioData.image || staticData.bio.image,
+          name: bioData.name || 'Your Name',
+          title: bioData.title || 'Your Title',
+          description: bioData.bio || 'Add your bio in the admin panel',
+          image: bioData.image || '/src/assets/profile.jpg',
         });
-        setSkills(bioData.skills?.length > 0 ? bioData.skills : staticData.skills);
-        setExperiences(bioData.experience?.length > 0 ? bioData.experience : staticData.experiences);
-        setEducations(bioData.education?.length > 0 ? bioData.education : staticData.educations);
-        setProjects(projectData?.length > 0 ? projectData : staticData.projects);
+        
+        setSkills(bioData.skills || []);
+        setExperiences(bioData.experience || []);
+        setEducations(bioData.education || []);
+        setProjects(projectData || []);
+        
+        // Set section colors from backend or default
+        setSectionColors(bioData.sectionColors || [
+          'bg-white dark:bg-gray-950',
+          'bg-gray-50 dark:bg-gray-900',
+          'bg-white dark:bg-gray-950',
+          'bg-gray-50 dark:bg-gray-900',
+          'bg-white dark:bg-gray-950',
+          'bg-gray-50 dark:bg-gray-900',
+        ]);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    if (user) {
-      fetchData();
-    }
+    
+    fetchData();
   }, [user]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="relative">
       <Header />
-      <Hero bio={bio} />
-      <About bio={bio} />
-      <Skills skills={skills} loading={loading} />
-      <Experience experiences={experiences} loading={loading} />
-      <Education educations={educations} loading={loading} />
-      <Projects projects={projects} loading={loading} />
-      <Contact />
-      <Footer />
-    </motion.div>
+      
+      <div className="pt-16">
+        <Hero bio={bio} />
+        
+        <About bio={bio} className={sectionColors[0] || 'bg-white dark:bg-gray-950'} />
+        
+        <Skills 
+          skills={skills} 
+          loading={loading} 
+          className={sectionColors[1] || 'bg-gray-50 dark:bg-gray-900'} 
+        />
+        
+        <Experience 
+          experiences={experiences} 
+          loading={loading} 
+          className={sectionColors[2] || 'bg-white dark:bg-gray-950'} 
+        />
+        
+        <Education 
+          educations={educations} 
+          loading={loading} 
+          className={sectionColors[3] || 'bg-gray-50 dark:bg-gray-900'} 
+        />
+        
+        <Projects 
+          projects={projects} 
+          loading={loading} 
+          className={sectionColors[4] || 'bg-white dark:bg-gray-950'} 
+        />
+        
+        <Contact className={sectionColors[5] || 'bg-gray-50 dark:bg-gray-900'} />
+        
+        <Footer />
+      </div>
+    </div>
   );
 }
 

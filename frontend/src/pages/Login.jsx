@@ -1,6 +1,4 @@
-/**
- * Login page component.
- */
+// frontend/src/pages/Login.jsx
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
@@ -9,12 +7,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/input.jsx';
 import { Label } from '../components/ui/label.jsx';
 import { Button } from '../components/ui/button.jsx';
-import PropTypes from 'prop-types';
 
 function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: { email: '', password: '' },
-  });
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { login } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,77 +29,89 @@ function Login() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4"
-    >
-      <div className="container max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-16">
-          {/* Left Side - Branding */}
-          <div className="w-full md:w-1/2 text-center md:text-left">
-            <Link to="/" className="inline-block">
-              <h1 className="text-slate-900 font-heading text-5xl md:text-6xl lg:text-7xl">
-                Portfolio
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="w-full max-w-md">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+        >
+          <div className="p-8">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Welcome Back
               </h1>
-            </Link>
-            <h2 className="mt-6 text-2xl md:text-3xl font-bold">Sign in to your account</h2>
-            <p className="mt-2 text-gray-600">Welcome to your portfolio, please provide your details</p>
-          </div>
-          {/* Right Side - Form */}
-          <div className="w-full md:w-1/2">
-            <div className="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: 'Invalid email address',
-                      },
-                    })}
-                    placeholder="Email"
-                  />
-                  {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    {...register('password', {
-                      required: 'Password is required',
-                    })}
-                    placeholder="Password"
-                  />
-                  {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-                </div>
-                <Button
-                  type="submit"
-                  className="bg-blue-500 text-white hover:bg-blue-600 w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Loading...' : 'Sign In'}
-                </Button>
-              </form>
-              <div className="mt-4 text-center text-sm">
-                <span>Don’t have an account? </span>
-                <Link to="/signup" className="text-blue-500 hover:underline">Sign Up</Link>
+              <p className="text-gray-600 dark:text-gray-300">
+                Sign in to access your portfolio
+              </p>
+            </div>
+            
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
+                {error}
               </div>
-              {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
+            )}
+            
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div>
+                <Label htmlFor="email" className="block mb-2 text-gray-700 dark:text-gray-300">
+                  Email Address
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...register('email', { required: 'Email is required' })}
+                  className="w-full"
+                  placeholder="your@email.com"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="password" className="block mb-2 text-gray-700 dark:text-gray-300">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register('password', { required: 'Password is required' })}
+                  className="w-full"
+                  placeholder="••••••••"
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+              
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing in...' : 'Sign In'}
+              </Button>
+            </form>
+            
+            <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+              Don't have an account?{' '}
+              <Link 
+                to="/signup" 
+                className="text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                Sign up
+              </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 }
-
-Login.propTypes = {};
 
 export default Login;
