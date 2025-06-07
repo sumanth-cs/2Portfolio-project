@@ -1,32 +1,35 @@
-/**
- * Header component with navigation.
- */
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../../contexts/AuthContext.jsx';
 import { ThemeContext } from '../../contexts/ThemeContext.jsx';
-import { Button } from '../ui/button.jsx';
+import { Button } from '../ui/button';
+import { Menu, Moon, Sun } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const navItems = [
   { name: 'Home', path: '/' },
-  { name: 'Portfolio', path: '/portfolio' },
-  { name: 'About', path: '/about' },
-  { name: 'Contact', path: '/contact' },
+  { name: 'About', path: '/#about' },
+  { name: 'Skills', path: '/#skills' },
+  { name: 'Experience', path: '/#experience' },
+  { name: 'Education', path: '/#education' },
+  { name: 'Projects', path: '/#projects' },
+  { name: 'Contact', path: '/#contact' },
 ];
 
 function Header() {
   const { user, logout } = useContext(AuthContext);
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { isDark, toggleDarkMode } = useContext(ThemeContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await logout();
+      toast.success('Logged out successfully');
       navigate('/login');
     } catch (error) {
-      console.error('Logout failed:', error);
+      toast.error('Logout failed');
     }
   };
 
@@ -35,27 +38,20 @@ function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white dark:bg-gray-800 shadow-md fixed w-full top-0 z-50"
+      className="bg-white shadow-md fixed w-full top-0 z-50"
     >
       <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+        <Link to="/" className="text-2xl font-bold text-primary">
           Portfolio
         </Link>
         <div className="hidden md:flex space-x-4">
-          {navItems.map((item, index) => (
-            <Link
-              key={`nav-${index}`}
-              to={item.path}
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-            >
+          {navItems.map((item) => (
+            <Link key={item.name} to={item.path} className="text-text-primary-on-background hover:text-primary">
               {item.name}
             </Link>
           ))}
           {user && (
-            <Link
-              to={`/portfolio/${user.id}`}
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-            >
+            <Link to="/dashboard" className="text-text-primary-on-background hover:text-primary">
               My Portfolio
             </Link>
           )}
@@ -63,7 +59,7 @@ function Header() {
         <div className="flex items-center space-x-4">
           {user ? (
             <>
-              <span className="text-gray-700 dark:text-gray-300">Welcome, {user.name}</span>
+              <span className="text-text-primary-on-background">Welcome, {user.name}</span>
               <Button onClick={handleLogout} variant="outline">
                 Logout
               </Button>
@@ -74,28 +70,31 @@ function Header() {
                 <Button variant="outline">Login</Button>
               </Link>
               <Link to="/signup">
-                <Button>Sign Up</Button>
+                <Button className="bg-primary text-white hover:bg-primary/90">
+                  Create Portfolio
+                </Button>
               </Link>
             </>
           )}
-          <Button onClick={toggleTheme} variant="ghost">
-            {theme === 'dark' ? '☀️' : '🌙'}
+          <Button onClick={toggleDarkMode} variant="ghost">
+            {isDark ? <Sun className="w-5 h-5 text-text-primary-on-background" /> : <Moon className="w-5 h-5 text-text-primary-on-background" />}
           </Button>
         </div>
-        <button
-          className="md:hidden text-gray-700 dark:text-gray-300"
+        <Button
+          className="md:hidden"
+          variant="ghost"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          ☰
-        </button>
+          <Menu className="w-6 h-6 text-text-primary-on-background" />
+        </Button>
       </nav>
       {isMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-800 px-4 py-2">
-          {navItems.map((item, index) => (
+        <div className="md:hidden bg-white px-4 py-2">
+          {navItems.map((item) => (
             <Link
-              key={`mobile-nav-${index}`}
+              key={item.name}
               to={item.path}
-              className="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              className="block py-2 text-text-primary-on-background hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
@@ -103,8 +102,8 @@ function Header() {
           ))}
           {user && (
             <Link
-              to={`/portfolio/${user.id}`}
-              className="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              to="/dashboard"
+              className="block py-2 text-text-primary-on-background hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
               My Portfolio

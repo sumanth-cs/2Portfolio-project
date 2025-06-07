@@ -8,15 +8,16 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes.js';
 import bioRoutes from './routes/bio.routes.js';
-import portfolioRoutes from './routes/portfolio.routes.js';
+import projectRoutes from './routes/project.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
+import themeRoutes from './routes/theme.routes.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 
@@ -32,8 +33,9 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/bio', bioRoutes);
-app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/projects', projectRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/theme', themeRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

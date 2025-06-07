@@ -3,8 +3,11 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../../contexts/AuthContext.jsx';
 import BioForm from './BioForm.jsx';
 import PhotoUpload from './PhotoUpload.jsx';
-import PortfolioForm from './PortfolioForm.jsx';
-import { Button } from '../ui/button.jsx';
+import ProjectForm from './ProjectForm.jsx';
+import ColorSettings from './ColorSettings.jsx';
+import { Button } from '../ui/button';
+import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
+import { Tabs, TabsList, TabsContent, TabsTrigger } from '../ui/tabs';
 import { toast } from 'react-hot-toast';
 
 function AdminDashboard() {
@@ -14,11 +17,13 @@ function AdminDashboard() {
   const tabs = [
     { id: 'bio', label: 'Bio' },
     { id: 'photos', label: 'Photos' },
-    { id: 'portfolio', label: 'Portfolio' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'colors', label: 'Theme' },
   ];
 
   const handleSave = (data) => {
     console.log('Saved:', data);
+    toast.success('Changes saved successfully');
   };
 
   const handleLogout = async () => {
@@ -31,37 +36,42 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="container mx-auto px-4 py-8"
-      >
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-primary-300">Dashboard</h2>
-            <p className="text-gray-600">Welcome, {user?.name || 'User'}</p>
-          </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="container mx-auto px-4 py-8"
+    >
+      <Card className="mb-8">
+        <CardHeader className="flex flex-row justify-between items-center">
+          <CardTitle className="text-3xl">Dashboard</CardTitle>
           <Button onClick={handleLogout} variant="outline">Logout</Button>
-        </div>
-        <div className="flex flex-wrap gap-2 mb-8">
+        </CardHeader>
+        <CardContent>
+          <p className="text-text-primary-on-background">Welcome, {user?.name || 'User'}</p>
+        </CardContent>
+      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-8">
           {tabs.map((tab) => (
-            <Button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              variant={activeTab === tab.id ? 'primary' : 'outline'}
-            >
+            <TabsTrigger key={tab.id} value={tab.id}>
               {tab.label}
-            </Button>
+            </TabsTrigger>
           ))}
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          {activeTab === 'bio' && <BioForm onSave={handleSave} />}
-          {activeTab === 'photos' && <PhotoUpload onSave={handleSave} />}
-          {activeTab === 'portfolio' && <PortfolioForm onSave={handleSave} />}
-        </div>
-      </motion.div>
-    </div>
+        </TabsList>
+        <TabsContent value="bio">
+          <BioForm onSave={handleSave} />
+        </TabsContent>
+        <TabsContent value="photos">
+          <PhotoUpload onSave={handleSave} />
+        </TabsContent>
+        <TabsContent value="projects">
+          <ProjectForm onSave={handleSave} />
+        </TabsContent>
+        <TabsContent value="colors">
+          <ColorSettings />
+        </TabsContent>
+      </Tabs>
+    </motion.div>
   );
 }
 

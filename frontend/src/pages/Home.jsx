@@ -1,52 +1,93 @@
+import { useContext, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext.jsx';
-import { getPortfolios } from '../api/portfolio.js';
-import { Link } from 'react-router-dom';
+import { getBio } from '../api/bio';
+import { getProjects } from '../api/projects';
+import Header from '../components/common/Header.jsx';
 import Hero from '../components/common/Hero.jsx';
 import About from '../components/common/About.jsx';
 import Skills from '../components/common/Skills.jsx';
-import Projects from '../components/common/Projects.jsx';
 import Experience from '../components/common/Experience.jsx';
 import Education from '../components/common/Education.jsx';
+import Projects from '../components/common/Projects.jsx';
 import Contact from '../components/common/Contact.jsx';
-import PortfolioSection from '../components/home/PortfolioSection.jsx';
-import Header from '../components/common/Header.jsx';
 import Footer from '../components/common/Footer.jsx';
-import { Button } from '../components/ui/button.jsx';
 
-const dummyData = {
-  portfolios: [
+const staticData = {
+  bio: {
+    name: 'John Doe',
+    title: 'Full-Stack Developer',
+    bio: 'Passionate about building user-friendly and scalable web applications.',
+    image: 'https://picsum.photos/200',
+  },
+  skills: [
+    { name: 'JavaScript', level: 90 },
+    { name: 'React', level: 85 },
+  ],
+  experiences: [
     {
-      _id: 'dummy1',
+      title: 'Senior Developer',
+      company: 'Tech Corp',
+      period: '2020 - Present',
+      description: 'Led a team to build scalable web applications.',
+    },
+  ],
+  educations: [
+    {
+      degree: 'B.Sc. Computer Science',
+      institution: 'XYZ University',
+      period: '2016 - 2020',
+    },
+  ],
+  projects: [
+    {
+      _id: 'static1',
       title: 'Sample Project',
       description: 'A showcase of modern web development techniques.',
       image: 'https://picsum.photos/300/200',
       tags: ['React', 'Node.js'],
+      liveUrl: 'https://example.com',
+      codeUrl: 'https://github.com/example',
     },
   ],
 };
 
 function Home() {
   const { user } = useContext(AuthContext);
-  const [portfolios, setPortfolios] = useState(user ? [] : dummyData.portfolios);
+  const [bio, setBio] = useState(staticData.bio);
+  const [skills, setSkills] = useState(staticData.skills);
+  const [experiences, setExperiences] = useState(staticData.experiences);
+  const [educations, setEducations] = useState(staticData.educations);
+  const [projects, setProjects] = useState(staticData.projects);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPortfolios = async () => {
-      if (!user) return;
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getPortfolios();
-        setPortfolios(data);
-      } catch (err) {
-        setError(err.message);
+        const [bioData, projectData] = await Promise.all([
+          getBio(),
+          getProjects(),
+        ]);
+        setBio({
+          name: bioData.name || staticData.bio.name,
+          title: bioData.title || staticData.bio.title,
+          description: bioData.bio || staticData.bio.bio,
+          image: bioData.image || staticData.bio.image,
+        });
+        setSkills(bioData.skills?.length > 0 ? bioData.skills : staticData.skills);
+        setExperiences(bioData.experience?.length > 0 ? bioData.experience : staticData.experiences);
+        setEducations(bioData.education?.length > 0 ? bioData.education : staticData.educations);
+        setProjects(projectData?.length > 0 ? projectData : staticData.projects);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchPortfolios();
+    if (user) {
+      fetchData();
+    }
   }, [user]);
 
   return (
@@ -56,24 +97,12 @@ function Home() {
       transition={{ duration: 0.5 }}
     >
       <Header />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Experience />
-      <Education />
-      <PortfolioSection portfolios={portfolios} loading={loading} error={error} />
-      <section className="text-center py-8">
-        {user ? (
-          <Link to="/dashboard">
-            <Button>{portfolios.length > 0 ? 'Edit Your Portfolio' : 'Create Your Portfolio'}</Button>
-          </Link>
-        ) : (
-          <Link to="/signup">
-            <Button>Create Your Portfolio</Button>
-          </Link>
-        )}
-      </section>
+      <Hero bio={bio} />
+      <About bio={bio} />
+      <Skills skills={skills} loading={loading} />
+      <Experience experiences={experiences} loading={loading} />
+      <Education educations={educations} loading={loading} />
+      <Projects projects={projects} loading={loading} />
       <Contact />
       <Footer />
     </motion.div>

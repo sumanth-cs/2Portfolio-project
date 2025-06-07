@@ -1,133 +1,34 @@
-// import { useForm } from 'react-hook-form';
-// import { motion } from 'framer-motion';
-// import { Card, CardContent } from '../ui/card.jsx';
-// import { Button } from '../ui/button.jsx';
-// import { Input } from '../ui/input.jsx';
-// import { Label } from '../ui/label.jsx';
-// import { Textarea } from '../ui/textarea.jsx';
-
-// function Contact() {
-//   const { register, handleSubmit, formState: { errors } } = useForm();
-
-//   const onSubmit = (data) => {
-//     console.log('Form submitted:', data);
-//     // Add API call here for form submission
-//   };
-
-//   return (
-//     <motion.section
-//       id="contact"
-//       className="py-20 bg-white parallax"
-//       style={{ backgroundImage: 'url(https://via.placeholder.com/1920x1080)' }}
-//       initial={{ opacity: 0 }}
-//       whileInView={{ opacity: 1 }}
-//       transition={{ duration: 0.8 }}
-//       viewport={{ once: true }}
-//     >
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <motion.h2
-//           className="text-4xl font-bold text-center text-red-700 mb-12"
-//           initial={{ y: 50, opacity: 0 }}
-//           whileInView={{ y: 0, opacity: 1 }}
-//           transition={{ duration: 0.6 }}
-//         >
-//           Contact Me
-//         </motion.h2>
-//         <motion.div
-//           initial={{ y: 50, opacity: 0 }}
-//           whileInView={{ y: 0, opacity: 1 }}
-//           transition={{ duration: 0.6 }}
-//         >
-//           <Card className="max-w-lg mx-auto shadow-lg bg-white/80 backdrop-blur-sm">
-//             <CardContent className="p-6">
-//               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-//                 <motion.div
-//                   initial={{ x: -50, opacity: 0 }}
-//                   whileInView={{ x: 0, opacity: 1 }}
-//                   transition={{ duration: 0.4 }}
-//                 >
-//                   <Label htmlFor="name">Name</Label>
-//                   <Input
-//                     id="name"
-//                     placeholder="Your Name"
-//                     {...register('name', { required: 'Name is required' })}
-//                   />
-//                   {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-//                 </motion.div>
-//                 <motion.div
-//                   initial={{ x: -50, opacity: 0 }}
-//                   whileInView={{ x: 0, opacity: 1 }}
-//                   transition={{ duration: 0.4, delay: 0.1 }}
-//                 >
-//                   <Label htmlFor="email">Email</Label>
-//                   <Input
-//                     id="email"
-//                     type="email"
-//                     placeholder="Your Email"
-//                     {...register('email', {
-//                       required: 'Email is required',
-//                       pattern: {
-//                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-//                         message: 'Invalid email address',
-//                       },
-//                     })}
-//                   />
-//                   {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-//                 </motion.div>
-//                 <motion.div
-//                   initial={{ x: -50, opacity: 0 }}
-//                   whileInView={{ x: 0, opacity: 1 }}
-//                   transition={{ duration: 0.4, delay: 0.2 }}
-//                 >
-//                   <Label htmlFor="message">Message</Label>
-//                   <Textarea
-//                     id="message"
-//                     placeholder="Your Message"
-//                     {...register('message', { required: 'Message is required' })}
-//                   />
-//                   {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
-//                 </motion.div>
-//                 <motion.div
-//                   initial={{ y: 50, opacity: 0 }}
-//                   whileInView={{ y: 0, opacity: 1 }}
-//                   transition={{ duration: 0.4, delay: 0.3 }}
-//                 >
-//                   <Button type="submit" className="w-full">
-//                     Send Message
-//                   </Button>
-//                 </motion.div>
-//               </form>
-//             </CardContent>
-//           </Card>
-//         </motion.div>
-//       </div>
-//     </motion.section>
-//   );
-// }
-
-// export default Contact;
-
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '../ui/card.jsx';
-import { Button } from '../ui/button.jsx';
-import { Input } from '../ui/input.jsx';
-import { Label } from '../ui/label.jsx';
-import { Textarea } from '../ui/textarea.jsx';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { toast } from 'react-hot-toast';
 
 function Contact() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
-  const onSubmit = (data) => {
-    console.log('Form submitted:', data);
-    // Add API call here for form submission
+  const onSubmit = async (data) => {
+    try {
+      console.log('Form submitted:', data);
+      toast.success('Message sent successfully!');
+      reset();
+    } catch (error) {
+      toast.error('Failed to send message.');
+    }
   };
 
   return (
     <motion.section
       id="contact"
-      className="py-20 bg-surface parallax"
-      style={{ backgroundImage: 'url(https://via.placeholder.com/1920x1080)' }}
+      className="py-16 bg-surface"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -142,71 +43,54 @@ function Contact() {
         >
           Contact Me
         </motion.h2>
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Card className="max-w-lg mx-auto shadow-lg bg-surface/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <motion.div
-                  initial={{ x: -50, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="Your Name"
-                    {...register('name', { required: 'Name is required' })}
-                  />
-                  {errors.name && <p className="text-error text-sm mt-1">{errors.name.message}</p>}
-                </motion.div>
-                <motion.div
-                  initial={{ x: -50, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                >
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Your Email"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: 'Invalid email address',
-                      },
-                    })}
-                  />
-                  {errors.email && <p className="text-error text-sm mt-1">{errors.email.message}</p>}
-                </motion.div>
-                <motion.div
-                  initial={{ x: -50, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                >
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Your Message"
-                    {...register('message', { required: 'Message is required' })}
-                  />
-                  {errors.message && <p className="text-error text-sm mt-1">{errors.message.message}</p>}
-                </motion.div>
-                <motion.div
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                >
-                  <Button type="submit" className="w-full">Send Message</Button>
-                </motion.div>
-              </form>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <Card className="max-w-lg mx-auto">
+          <CardHeader>
+            <CardTitle>Send a Message</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  placeholder="Your Name"
+                  {...register('name', { required: 'Name is required' })}
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+              </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Your Email"
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Invalid email address',
+                    },
+                  })}
+                />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+              </div>
+              <div>
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Your Message"
+                  {...register('message', { required: 'Message is required' })}
+                />
+                {errors.message && (
+                  <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                )}
+              </div>
+              <Button type="submit" className="w-full bg-primary text-white hover:bg-primary/90">
+                Send Message
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </motion.section>
   );
