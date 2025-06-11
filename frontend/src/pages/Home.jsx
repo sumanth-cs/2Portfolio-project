@@ -10,6 +10,7 @@ import Projects from '../components/common/Projects';
 import Contact from '../components/common/Contact';
 import Footer from '../components/common/Footer';
 import { getBio } from '../api/bio.js';
+import defaultProfilePic from "../assets/defaultProfilePic.jpg";
 
 const DEFAULT_BIO = {
   name: 'John Doe',
@@ -42,7 +43,7 @@ const DEFAULT_BIO = {
     { name: 'LinkedIn', link: 'https://linkedin.com' }
   ],
   resume: '',
-  image: '/placeholder-profile.jpg'
+  image: defaultProfilePic,
 };
 
 function Home() {
