@@ -114,7 +114,7 @@ function Hero({ bio = {} }) {
                 rel="noopener noreferrer"
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.9 }}
-                className="p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex flex-col items-center group"
+                className="p-3 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-100 transition-colors flex flex-col items-center group"
                 style={{ color: colors.text }}
                 aria-label={social.name}
               >

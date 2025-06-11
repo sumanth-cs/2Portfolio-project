@@ -188,7 +188,6 @@
 
 // export default Header;
 
-// frontend/src/components/common/Header.jsx
 import { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -206,7 +205,7 @@ const navItems = [
 ];
 
 function Header() {
-  const { user, signout } = useContext(AuthContext); 
+  const { user, signout } = useContext(AuthContext);
   const { colors } = useContext(ThemeContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -231,7 +230,7 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      await signout(); 
+      await signout();
       toast.success('Logged out successfully');
       navigate('/login');
     } catch (error) {
@@ -253,31 +252,22 @@ function Header() {
             className="text-2xl font-bold flex items-center gap-2"
             style={{ color: colors.text }}
           >
-            <span className="text-primary bolder" style={{ color: colors.primary }}>Portfolio.</span>
+            <span className="text-primary font-semibold" style={{ color: colors.primary }}>Portfolio.</span>
           </Link>
         </motion.div>
 
         <div className="hidden md:flex items-center gap-6">
           {navItems.map((item) => (
-            <motion.div
+            <a
               key={item.name}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.95 }}
+              href={item.path}
+              onClick={(e) => handleScroll(e, item.path)}
+              className="relative flex items-center gap-1 hover:opacity-80 transition-opacity nav-link"
+              style={{ color: colors.text }}
             >
-              <a
-                href={item.path}
-                onClick={(e) => handleScroll(e, item.path)}
-                className="relative flex items-center gap-1 hover:opacity-80 transition-opacity nav-link"
-                style={{ color: colors.text }}
-              >
-                {item.icon}
-                {item.name}
-                <span
-                  className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full"
-                  style={{ backgroundColor: colors.text }}
-                />
-              </a>
-            </motion.div>
+              {item.icon}
+              {item.name}
+            </a>
           ))}
         </div>
 
@@ -361,21 +351,16 @@ function Header() {
         >
           <div className="flex flex-col space-y-3">
             {navItems.map((item) => (
-              <motion.a
+              <a
                 key={item.name}
                 href={item.path}
                 onClick={(e) => handleScroll(e, item.path)}
                 className="relative flex items-center gap-2 py-2 hover:opacity-80 transition-opacity nav-link"
                 style={{ color: colors.text }}
-                whileHover={{ x: 5 }}
               >
                 {item.icon}
                 {item.name}
-                <span
-                  className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full"
-                  style={{ backgroundColor: colors.text }}
-                />
-              </motion.a>
+              </a>
             ))}
           </div>
         </motion.div>
