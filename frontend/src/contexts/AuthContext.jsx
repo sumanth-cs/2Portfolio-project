@@ -1,87 +1,70 @@
-/**
- * Provides authentication context with JWT-based user session management.
- */
-import { createContext, useState, useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { signup, login, logout, getCurrentUser } from '../api/api.js';
+import { createContext, useState, useEffect } from 'react';
+import { getCurrentUser, logout } from '../api/api.js';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const checkSession = useCallback(async () => {
-    try {
-      const response = await getCurrentUser();
-      setUser(response.user);
-      setError(null);
-    } catch (err) {
-      // Handle 401 gracefully (user not logged in)
-      if (err.message.includes('401')) {
-        setUser(null);
-        localStorage.removeItem('token');
-      } else {
-        setError(err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+    const checkAuth = async () => {
+      try {
+        const response = await getCurrentUser();
+        setUser(response.user);
+      } catch (error) {
+        console.error('Auth check error:', error);
+        if (
+          error.message.includes('User not found') ||
+          error.message.includes('Authentication required') ||
+          error.message.includes('jwt expired') ||
+          error.message.includes('Invalid or missing token')
+        ) {
+          localStorage.removeItem('token');
+          setUser(null);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
-  const loginUser = async (email, password) => {
+  const login = async (email, password) => {
     try {
-      setError(null);
-      const response = await login(email, password);
+      const response = await import('../api/api.js').then(({ login }) => login(email, password));
       localStorage.setItem('token', response.token);
       setUser(response.user);
-      return response.user;
-    } catch (err) {
-      setError(err.message);
-      throw err;
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Login failed');
     }
   };
 
-  const signupUser = async (name, email, password) => {
+  const signup = async (name, email, password) => {
     try {
-      setError(null);
-      const response = await signup(name, email, password);
+      const response = await import('../api/api.js').then(({ signup }) => signup(name, email, password));
       localStorage.setItem('token', response.token);
       setUser(response.user);
-      return response.user;
-    } catch (err) {
-      setError(err.message);
-      throw err;
+      return response;
+    } catch (error) {
+      throw new Error(error.message || 'Signup failed');
     }
   };
 
-  const logoutUser = async () => {
+  const signout = async () => {
     try {
-      setError(null);
       await logout();
       localStorage.removeItem('token');
       setUser(null);
-    } catch (err) {
-      setError('Logout failed');
-      console.error('Logout failed:', err);
-      throw err;
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login: loginUser, signup: signupUser, logout: logoutUser, loading, error, checkSession }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, signup, signout }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
 };

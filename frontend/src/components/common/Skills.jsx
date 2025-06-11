@@ -1,57 +1,65 @@
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '../ui/card';
+import { Star } from 'lucide-react';
 
 function Skills({ skills, loading }) {
   if (loading) {
     return <div className="text-center py-16">Loading...</div>;
   }
 
+  const getLevelColor = (level) => {
+    switch (level.toLowerCase()) {
+      case 'expert':
+        return 'bg-green-500';
+      case 'intermediate':
+        return 'bg-yellow-500';
+      case 'basic':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
   return (
-    <motion.section
-      id="skills"
-      className="py-16 bg-surface"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.h2
-          className="text-4xl font-bold text-center text-primary mb-12"
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
+    <section id="skills" className="py-20 px-4 relative">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="bubble bubble-3"></div>
+        <div className="bubble bubble-4"></div>
+      </div>
+      <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
         >
-          Skills
-        </motion.h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <p className="opacity-80 mb-2">Explore My</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Skills</h2>
+        </motion.div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {skills.map((skill, index) => (
             <motion.div
-              key={`skill-${index}`}
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              whileHover={{ scale: 1.05, boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}
+              key={index}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              whileHover={{ y: -5 }}
+              className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all"
             >
-              <Card className="shadow-lg">
-                <CardContent className="p-6">
-                  <p className="text-lg font-semibold text-primary">{skill.name}</p>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2">
-                    <motion.div
-                      className="bg-primary h-2.5 rounded-full"
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${skill.level}%` }}
-                      transition={{ duration: 1, delay: index * 0.1 }}
-                    />
-                  </div>
-                  <p className="text-sm text-text-secondary-on-background mt-2">{skill.level}%</p>
-                </CardContent>
-              </Card>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium">{skill.name}</h3>
+                <Star className="w-5 h-5 text-yellow-400" />
+              </div>
+              <span className={`px-3 py-1 text-sm rounded-full text-white ${getLevelColor(skill.level)}`}>
+                {skill.level}
+              </span>
             </motion.div>
           ))}
         </div>
       </div>
-    </motion.section>
+      <hr className="border-gray-200 dark:border-gray-700 mt-20" />
+    </section>
   );
 }
 

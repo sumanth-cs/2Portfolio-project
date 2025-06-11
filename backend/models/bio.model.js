@@ -10,10 +10,11 @@ const bioSchema = new mongoose.Schema({
   bio: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String },
-  skills: [{ name: String, level: Number }],
+  skills: [{ name: String, level: { type: String, enum: ['Basic', 'Intermediate', 'Expert'] } }],
   education: [{ degree: String, institution: String, period: String }],
   experience: [{ title: String, company: String, period: String, description: String }],
   social: [{ name: String, link: String }],
+  resume: { type: String },
 }, { timestamps: true });
 
 const Bio = mongoose.model('Bio', bioSchema);

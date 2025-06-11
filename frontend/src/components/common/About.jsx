@@ -66,62 +66,47 @@
 
 // export default About;
 
-// frontend/src/components/common/About.jsx
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
+import { ThemeContext } from '@/contexts/ThemeContext.jsx';
 
-function About({ bio }) {
+function About({ bio = {} }) {
+  const { colors } = useContext(ThemeContext);
+
+  if (!bio.name) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
   return (
     <section id="about" className="py-20 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="space-y-8"
         >
-          <p className="opacity-80 mb-2">Get To Know More</p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
-        </motion.div>
-
-        <div className="flex flex-col md:flex-row gap-12 items-center">
-          <motion.div
-            initial={{ x: -50, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="md:w-1/2"
-          >
-            <img
-              src={bio.image || '/src/assets/profile.jpg'}
-              alt="About"
-              className="w-full max-w-md rounded-2xl shadow-lg"
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ x: 50, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="md:w-1/2 space-y-6"
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                <h3 className="font-medium mb-2">Experience</h3>
-                <p className="opacity-80">2+ Years</p>
-                <p className="opacity-80">Fullstack Development</p>
-              </div>
-              <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                <h3 className="font-medium mb-2">Education</h3>
-                <p className="opacity-80">B.Sc. Computer Science</p>
-                <p className="opacity-80">M.Sc. Software Engineering</p>
-              </div>
+          <h2 className="text-4xl font-bold text-center" style={{ color: colors.primary }}>
+            About Me
+          </h2>
+          <div className="flex flex-col md:flex-row gap-8 items-center">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="w-48 h-48 rounded-full overflow-hidden shadow-lg"
+            >
+              <img
+                src={bio.image || '/src/assets/profile.jpg'}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <div className="flex-1">
+              <p className="text-lg leading-relaxed" style={{ color: colors.text }}>
+                {bio.bio || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
+              </p>
             </div>
-
-            <p className="opacity-80 leading-relaxed">
-              {bio.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'}
-            </p>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
