@@ -25,7 +25,7 @@ function Skills({ skills, loading }) {
         <div className="bubble bubble-3"></div>
         <div className="bubble bubble-4"></div>
       </div>
-      <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 relative z-10">
+      <div className="max-w-6xl mx-auto p-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -45,7 +45,7 @@ function Skills({ skills, loading }) {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
               whileHover={{ y: -5 }}
-              className="p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all"
+              className="p-6 rounded-xl shadow-md hover:shadow-lg transition-all"
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-medium">{skill.name}</h3>
@@ -58,7 +58,6 @@ function Skills({ skills, loading }) {
           ))}
         </div>
       </div>
-      <hr className="border-gray-200 dark:border-gray-700 mt-20" />
     </section>
   );
 }

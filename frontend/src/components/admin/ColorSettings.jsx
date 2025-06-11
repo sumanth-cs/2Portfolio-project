@@ -24,11 +24,11 @@ const ColorSettings = () => {
         <CardTitle>Theme Colors</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-gray-800">
           {colorOptions.map((color) => (
-            <div key={color.id} className="space-y-2">
+            <div key={color.id} className="space-y-2 border-gray-800">
               <div
-                className="w-full h-20 rounded-md cursor-pointer border border-gray-300"
+                className="w-full h-20 rounded-md cursor-pointer border border-gray-800"
                 style={{ 
                   backgroundColor: color.id === 'background' ? colors.background : colors.text,
                   borderColor: color.id === 'text' ? colors.text : colors.background

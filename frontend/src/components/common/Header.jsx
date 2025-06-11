@@ -1,307 +1,34 @@
-// // // frontend/src/components/common/Header.jsx
-// // import { useContext, useState, useEffect } from 'react';
-// // import { Link, useNavigate } from 'react-router-dom';
-// // import { motion } from 'framer-motion';
-// // import { AuthContext } from '../../contexts/AuthContext.jsx';
-// // import { ThemeContext } from '../../contexts/ThemeContext.jsx';
-// // import { Button } from '../ui/button';
-// // import { Menu, Moon, Sun, Download, Share2 } from 'lucide-react';
-// // import { toast } from 'react-hot-toast';
-
-// // const navItems = [
-// //   { name: 'Home', path: '#home' },
-// //   { name: 'About', path: '#about' },
-// //   { name: 'Skills', path: '#skills' },
-// //   { name: 'Experience', path: '#experience' },
-// //   { name: 'Projects', path: '#projects' },
-// //   { name: 'Contact', path: '#contact' },
-// // ];
-
-// // function Header() {
-// //   const { user, logout } = useContext(AuthContext);
-// //   const { isDark, toggleDarkMode } = useContext(ThemeContext);
-// //   const [isMenuOpen, setIsMenuOpen] = useState(false);
-// //   const [scrolled, setScrolled] = useState(false);
-// //   const navigate = useNavigate();
-
-// //   useEffect(() => {
-// //     const handleScroll = () => {
-// //       setScrolled(window.scrollY > 10);
-// //     };
-// //     window.addEventListener('scroll', handleScroll);
-// //     return () => window.removeEventListener('scroll', handleScroll);
-// //   }, []);
-
-// //   const handleScroll = (e, hash) => {
-// //     e.preventDefault();
-// //     const element = document.querySelector(hash);
-// //     if (element) {
-// //       element.scrollIntoView({
-// //         behavior: 'smooth',
-// //         block: 'start'
-// //       });
-// //     }
-// //     setIsMenuOpen(false);
-// //   };
-
-// //   const handleLogout = async () => {
-// //     try {
-// //       await logout();
-// //       toast.success('Logged out successfully');
-// //       navigate('/login');
-// //     } catch (error) {
-// //       toast.error('Logout failed');
-// //     }
-// //   };
-
-// //   return (
-// //     <motion.header
-// //       initial={{ y: -100 }}
-// //       animate={{ y: 0 }}
-// //       transition={{ duration: 0.5 }}
-// //       className={`fixed w-full top-0 z-50 transition-all ${scrolled ? 'backdrop-blur-md bg-white/80 dark:bg-gray-900/80 shadow-sm' : 'bg-transparent'}`}
-// //     >
-// //       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-// //         <Link to="/" className="text-2xl font-bold text-primary">
-// //           Portfolio
-// //         </Link>
-
-// //         <div className="hidden md:flex items-center gap-6">
-// //           {navItems.map((item) => (
-// //             <a
-// //               key={item.name}
-// //               href={item.path}
-// //               onClick={(e) => handleScroll(e, item.path)}
-// //               className="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors"
-// //             >
-// //               {item.name}
-// //             </a>
-// //           ))}
-// //         </div>
-
-// //         <div className="flex items-center gap-3">
-// //           <Button
-// //             onClick={toggleDarkMode}
-// //             variant="ghost"
-// //             size="icon"
-// //             aria-label="Toggle theme"
-// //           >
-// //             {isDark ? (
-// //               <Sun className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-// //             ) : (
-// //               <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-// //             )}
-// //           </Button>
-
-// //           {user ? (
-// //             <>
-// //               <Button onClick={handleLogout} variant="outline">
-// //                 Logout
-// //               </Button>
-// //             </>
-// //           ) : (
-// //             <>
-// //               <Link to="/login">
-// //                 <Button variant="outline">Login</Button>
-// //               </Link>
-// //               <Link to="/signup">
-// //                 <Button>Create Portfolio</Button>
-// //               </Link>
-// //             </>
-// //           )}
-
-// //           <Button
-// //             className="md:hidden"
-// //             variant="ghost"
-// //             size="icon"
-// //             onClick={() => setIsMenuOpen(!isMenuOpen)}
-// //             aria-label="Toggle menu"
-// //           >
-// //             <Menu className="w-6 h-6" />
-// //           </Button>
-// //         </div>
-// //       </nav>
-
-// //       {isMenuOpen && (
-// //         <motion.div
-// //           initial={{ opacity: 0, y: -20 }}
-// //           animate={{ opacity: 1, y: 0 }}
-// //           className="md:hidden bg-white dark:bg-gray-900 px-4 py-3 shadow-lg"
-// //         >
-// //           {navItems.map((item) => (
-// //             <a
-// //               key={item.name}
-// //               href={item.path}
-// //               onClick={(e) => handleScroll(e, item.path)}
-// //               className="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary transition-colors"
-// //             >
-// //               {item.name}
-// //             </a>
-// //           ))}
-// //         </motion.div>
-// //       )}
-// //     </motion.header>
-// //   );
-// // }
-
-// // export default Header;
-
-// import { useContext, useState, useEffect } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { motion } from 'framer-motion';
-// import { AuthContext } from '../../contexts/AuthContext';
-// import { Button } from '../ui/button';
-// import { Menu } from 'lucide-react';
-// import { toast } from 'react-hot-toast';
-
-// const navItems = [
-//   { name: 'About', path: '#about' },
-//   { name: 'Experience', path: '#experience' },
-//   { name: 'Projects', path: '#projects' },
-//   { name: 'Contact', path: '#contact' },
-// ];
-
-// function Header() {
-//   const { user, logout } = useContext(AuthContext);
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
-//   const [scrolled, setScrolled] = useState(false);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       setScrolled(window.scrollY > 10);
-//     };
-//     window.addEventListener('scroll', handleScroll);
-//     return () => window.removeEventListener('scroll', handleScroll);
-//   }, []);
-
-//   const handleScroll = (e, hash) => {
-//     e.preventDefault();
-//     const element = document.querySelector(hash);
-//     if (element) {
-//       element.scrollIntoView({ behavior: 'smooth' });
-//     }
-//     setIsMenuOpen(false);
-//   };
-
-//   const handleLogout = async () => {
-//     try {
-//       await logout();
-//       toast.success('Logged out successfully');
-//       navigate('/login');
-//     } catch (error) {
-//       toast.error('Logout failed');
-//     }
-//   };
-
-//   return (
-//     <header
-//       className={`fixed w-full top-0 z-50 transition-all ${
-//         scrolled ? 'bg-white shadow-sm' : 'bg-transparent'
-//       }`}
-//     >
-//       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-//         <Link to="/" className="text-2xl font-bold text-black">
-//           Portfolio
-//         </Link>
-
-//         <div className="hidden md:flex items-center gap-6">
-//           {navItems.map((item) => (
-//             <a
-//               key={item.name}
-//               href={item.path}
-//               onClick={(e) => handleScroll(e, item.path)}
-//               className="text-black hover:opacity-80 transition-opacity"
-//             >
-//               {item.name}
-//             </a>
-//           ))}
-//         </div>
-
-//         <div className="flex items-center gap-3">
-//           {user ? (
-//             <>
-//               <Button
-//                 onClick={handleLogout}
-//                 variant="outline"
-//                 className="border-black text-black hover:bg-black hover:text-white"
-//               >
-//                 Logout
-//               </Button>
-//               <Button asChild>
-//                 <Link to="/dashboard">Dashboard</Link>
-//               </Button>
-//             </>
-//           ) : (
-//             <>
-//               <Button
-//                 asChild
-//                 variant="outline"
-//                 className="border-black text-black hover:bg-black hover:text-white"
-//               >
-//                 <Link to="/login">Login</Link>
-//               </Button>
-//               <Button asChild className="bg-black text-white hover:bg-gray-800">
-//                 <Link to="/signup">Sign Up</Link>
-//               </Button>
-//             </>
-//           )}
-
-//           <Button
-//             className="md:hidden"
-//             variant="ghost"
-//             size="icon"
-//             onClick={() => setIsMenuOpen(!isMenuOpen)}
-//           >
-//             <Menu className="w-5 h-5 text-black" />
-//           </Button>
-//         </div>
-//       </nav>
-
-//       {isMenuOpen && (
-//         <motion.div
-//           initial={{ opacity: 0, y: -20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           className="md:hidden bg-white p-4 shadow-lg"
-//         >
-//           {navItems.map((item) => (
-//             <a
-//               key={item.name}
-//               href={item.path}
-//               onClick={(e) => handleScroll(e, item.path)}
-//               className="block py-2 text-black hover:opacity-80 transition-opacity"
-//             >
-//               {item.name}
-//             </a>
-//           ))}
-//         </motion.div>
-//       )}
-//     </header>
-//   );
-// }
-
-// export default Header;
+// frontend/src/components/common/Header.jsx
 import { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../../contexts/AuthContext';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { Button } from '../ui/button';
-import { Menu, LogOut, User } from 'lucide-react';
+import { Menu, LogOut, User, LayoutDashboard, Home, PenSquare } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const navItems = [
-  { name: 'About', path: '#about' },
-  { name: 'Experience', path: '#experience' },
-  { name: 'Projects', path: '#projects' },
-  { name: 'Contact', path: '#contact' },
+  { name: 'About', path: '#about', icon: <User className="w-4 h-4" /> },
+  { name: 'Experience', path: '#experience', icon: <PenSquare className="w-4 h-4" /> },
+  { name: 'Projects', path: '#projects', icon: <LayoutDashboard className="w-4 h-4" /> },
+  { name: 'Contact', path: '#contact', icon: <Home className="w-4 h-4" /> },
 ];
 
 function Header() {
   const { user, logout } = useContext(AuthContext);
   const { colors } = useContext(ThemeContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleScroll = (e, hash) => {
     e.preventDefault();
@@ -324,60 +51,96 @@ function Header() {
 
   return (
     <header
-      className="fixed w-full top-0 z-50 shadow-sm"
-      style={{ backgroundColor: colors.background, color: colors.text }}
+      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-opacity-90 backdrop-blur-sm shadow-sm' : 'bg-opacity-100'
+      }`}
+      style={{ backgroundColor: colors.background }}
     >
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold" style={{ color: colors.text }}>
-          Portfolio
-        </Link>
+        <motion.div whileHover={{ scale: 1.05 }}>
+          <Link 
+            to="/" 
+            className="text-2xl font-bold flex items-center gap-2"
+            style={{ color: colors.text }}
+          >
+            <span className="text-primary" style={{ color: colors.primary }}>Portfolio</span>
+          </Link>
+        </motion.div>
 
         <div className="hidden md:flex items-center gap-6">
           {navItems.map((item) => (
-            <a
+            <motion.div
               key={item.name}
-              href={item.path}
-              onClick={(e) => handleScroll(e, item.path)}
-              className="hover:opacity-80 transition-opacity"
-              style={{ color: colors.text }}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {item.name}
-            </a>
+              <a
+                href={item.path}
+                onClick={(e) => handleScroll(e, item.path)}
+                className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+                style={{ color: colors.text }}
+              >
+                {item.icon}
+                {item.name}
+              </a>
+            </motion.div>
           ))}
         </div>
 
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                className="border-current hover:bg-gray-100 dark:hover:bg-gray-800"
-                style={{ color: colors.text }}
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
-              <Button asChild style={{ backgroundColor: colors.primary, color: '#ffffff' }}>
-                <Link to="/dashboard">
-                  <User className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Link>
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="border-current hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2"
+                  style={{ color: colors.text }}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Button 
+                  asChild
+                  style={{ 
+                    backgroundColor: colors.primary,
+                    color: colors.buttonText
+                  }}
+                >
+                  <Link to="/dashboard" className="flex items-center gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </Link>
+                </Button>
+              </motion.div>
             </>
           ) : (
             <>
-              <Button
-                asChild
-                variant="outline"
-                className="border-current hover:bg-gray-100 dark:hover:bg-gray-800"
-                style={{ color: colors.text }}
-              >
-                <Link to="/login">Login</Link>
-              </Button>
-              <Button asChild style={{ backgroundColor: colors.primary, color: '#ffffff' }}>
-                <Link to="/signup">Sign Up</Link>
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-current hover:bg-gray-100 dark:hover:bg-gray-800"
+                  style={{ color: colors.text }}
+                >
+                  <Link to="/login">Login</Link>
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Button 
+                  asChild
+                  style={{ 
+                    backgroundColor: colors.primary,
+                    color: colors.buttonText
+                  }}
+                >
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+              </motion.div>
             </>
           )}
 
@@ -386,8 +149,9 @@ function Header() {
             variant="ghost"
             size="icon"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            style={{ color: colors.text }}
           >
-            <Menu className="w-5 h-5" style={{ color: colors.text }} />
+            <Menu className="w-5 h-5" />
           </Button>
         </div>
       </nav>
@@ -396,20 +160,26 @@ function Header() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.2 }}
           className="md:hidden p-4 shadow-lg"
           style={{ backgroundColor: colors.background }}
         >
-          {navItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.path}
-              onClick={(e) => handleScroll(e, item.path)}
-              className="block py-2 hover:opacity-80 transition-opacity"
-              style={{ color: colors.text }}
-            >
-              {item.name}
-            </a>
-          ))}
+          <div className="flex flex-col space-y-3">
+            {navItems.map((item) => (
+              <motion.a
+                key={item.name}
+                href={item.path}
+                onClick={(e) => handleScroll(e, item.path)}
+                className="flex items-center gap-2 py-2 hover:opacity-80 transition-opacity"
+                style={{ color: colors.text }}
+                whileHover={{ x: 5 }}
+              >
+                {item.icon}
+                {item.name}
+              </motion.a>
+            ))}
+          </div>
         </motion.div>
       )}
     </header>
