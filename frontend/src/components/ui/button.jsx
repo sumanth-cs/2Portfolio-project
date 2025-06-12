@@ -30,14 +30,21 @@ const buttonVariants = cva(
 );
 
 const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : motion.button; // Use motion.button for non-Slot cases
+  const Comp = asChild ? Slot : motion.button;
+  // Only apply motion props when using motion.button
+  const motionProps = asChild
+    ? {}
+    : {
+        whileHover: { scale: 1.05 },
+        whileTap: { scale: 0.95 },
+        transition: { type: 'spring', stiffness: 400, damping: 10 },
+      };
+
   return (
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
       ref={ref}
-      whileHover={{ scale: 1.05 }} // Add motion animations
-      whileTap={{ scale: 0.95 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+      {...motionProps}
       {...props}
     />
   );

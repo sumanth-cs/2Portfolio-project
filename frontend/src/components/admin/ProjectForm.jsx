@@ -1,21 +1,16 @@
-import { useForm } from "react-hook-form";
-import { useState, useEffect, useContext } from "react";
-import {
-  createProject,
-  getProjects,
-  updateProject,
-} from "../../api/projects.js";
-import { uploadFile } from "@/lib/appwrite/storage.js";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
-import { toast } from "react-hot-toast";
-import { ThemeContext } from "@/contexts/ThemeContext.jsx";
+import { useForm } from 'react-hook-form';
+import { useState, useEffect, useContext } from 'react';
+import { createProject, getProjects, updateProject } from '../../api/projects.js';
+import { uploadFile } from '../../api/upload.js'; // Updated import
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { toast } from 'react-hot-toast';
+import { ThemeContext } from '@/contexts/ThemeContext.jsx';
 
 function ProjectForm({ onSave }) {
-
   const { colors } = useContext(ThemeContext);
 
   const {
@@ -36,9 +31,9 @@ function ProjectForm({ onSave }) {
   const fetchProjects = async () => {
     try {
       const data = await getProjects();
-      setProjects(data);
+      setProjects(data.projects || []); // Adjust based on API response
     } catch (error) {
-      toast.error("Failed to load projects");
+      toast.error('Failed to load projects');
     }
   };
 
@@ -49,14 +44,14 @@ function ProjectForm({ onSave }) {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      let imageUrl = data.image || "";
+      let imageUrl = data.image || '';
       if (imageFile) {
         imageUrl = await uploadFile(imageFile);
       }
       const projectData = {
         ...data,
         image: imageUrl,
-        tags: data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [],
+        tags: data.tags ? data.tags.split(',').map((tag) => tag.trim()) : [],
       };
       let project;
       if (editingId) {
@@ -66,16 +61,16 @@ function ProjectForm({ onSave }) {
       }
       setProjects((prev) =>
         editingId
-          ? prev.map((p) => (p._id === editingId ? project : p))
-          : [...prev, project]
+          ? prev.map((p) => (p._id === editingId ? project.project : p))
+          : [...prev, project.project]
       );
       reset();
       setEditingId(null);
       setImageFile(null);
-      onSave(project);
-      toast.success("Project saved");
+      onSave(project.project);
+      toast.success('Project saved');
     } catch (error) {
-      toast.error("Failed to save project");
+      toast.error(`Failed to save project: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -86,7 +81,7 @@ function ProjectForm({ onSave }) {
       title: project.title,
       description: project.description,
       image: project.image,
-      tags: project.tags?.join(", "),
+      tags: project.tags?.join(', '),
       liveUrl: project.liveUrl,
       codeUrl: project.codeUrl,
     });
@@ -98,9 +93,9 @@ function ProjectForm({ onSave }) {
     try {
       // Add deleteProject API if needed
       setProjects((prev) => prev.filter((p) => p._id !== id));
-      toast.success("Project deleted");
+      toast.success('Project deleted');
     } catch (error) {
-      toast.error("Failed to delete project");
+      toast.error('Failed to delete project');
     }
   };
 
@@ -116,12 +111,10 @@ function ProjectForm({ onSave }) {
             <Input
               id="title"
               placeholder="Project Title"
-              {...register("title", { required: "Title is required" })}
+              {...register('title', { required: 'Title is required' })}
             />
             {errors.title && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.title.message}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
             )}
           </div>
           <div>
@@ -129,7 +122,7 @@ function ProjectForm({ onSave }) {
             <Textarea
               id="description"
               placeholder="Project Description"
-              {...register("description")}
+              {...register('description')}
             />
           </div>
           <div>
@@ -142,8 +135,7 @@ function ProjectForm({ onSave }) {
             />
             {editingId && (
               <p className="text-sm text-gray-500 mt-1">
-                Current image:{" "}
-                {projects.find((p) => p._id === editingId)?.image}
+                Current image: {projects.find((p) => p._id === editingId)?.image}
               </p>
             )}
           </div>
@@ -152,7 +144,7 @@ function ProjectForm({ onSave }) {
             <Input
               id="tags"
               placeholder="React, Node.js, MongoDB"
-              {...register("tags")}
+              {...register('tags')}
             />
           </div>
           <div>
@@ -160,7 +152,7 @@ function ProjectForm({ onSave }) {
             <Input
               id="liveUrl"
               placeholder="https://project.com"
-              {...register("liveUrl")}
+              {...register('liveUrl')}
             />
           </div>
           <div>
@@ -168,7 +160,7 @@ function ProjectForm({ onSave }) {
             <Input
               id="codeUrl"
               placeholder="https://github.com/project"
-              {...register("codeUrl")}
+              {...register('codeUrl')}
             />
           </div>
           <Button
@@ -180,7 +172,7 @@ function ProjectForm({ onSave }) {
               color: colors.buttonText,
             }}
           >
-            {loading ? "Saving..." : editingId ? "Update" : "Add"} Project
+            {loading ? 'Saving...' : editingId ? 'Update' : 'Add'} Project
           </Button>
         </form>
         <div className="space-y-2">

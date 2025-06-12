@@ -6,10 +6,14 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 export const apiFetch = async (url, options = {}) => {
   const token = localStorage.getItem('token');
 
+  // Determine if the request is for file upload (multipart/form-data)
+  const isFormData = options.body instanceof FormData;
+
   const defaultOptions = {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      // Only set Content-Type for non-FormData requests
+      ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
@@ -17,7 +21,7 @@ export const apiFetch = async (url, options = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL}${url}`, defaultOptions);
-    
+
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
       const data = await response.json();
@@ -25,6 +29,9 @@ export const apiFetch = async (url, options = {}) => {
         throw new Error(data.message || `HTTP error ${response.status}`);
       }
       return data;
+    } else if (response.ok && isFormData) {
+      // Handle non-JSON responses for file uploads
+      return await response.json(); // Assuming backend returns JSON with fileUrl
     } else {
       const text = await response.text();
       throw new Error(`Expected JSON, received ${contentType || 'unknown content type'}: ${text.slice(0, 50)}...`);
