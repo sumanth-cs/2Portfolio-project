@@ -1,17 +1,16 @@
 import { useContext, useState } from 'react';
 import { motion } from 'framer-motion';
-import { uploadFile } from '../../api/upload.js';
+import { uploadFile } from '../../lib/appwrite/storage.js';
 import { updateBio, getBio } from '../../api/bio.js';
-import { Button } from '../ui/button.jsx';
-import { Input } from '../ui/input.jsx';
-import { Label } from '../ui/label.jsx';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { toast } from 'react-hot-toast';
 import { ThemeContext } from '@/contexts/ThemeContext.jsx';
 
 function PhotoUpload({ onSave }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const { colors } = useContext(ThemeContext);
 
   const handleFileChange = (e) => {
@@ -22,24 +21,42 @@ function PhotoUpload({ onSave }) {
     e.preventDefault();
     setLoading(true);
     try {
-      // Upload the first image (assuming single profile image)
       if (files.length === 0) {
         throw new Error('No files selected');
       }
-      const file = files[0]; // Use first file
+      const file = files[0];
+      // Upload to Appwrite
       const fileUrl = await uploadFile(file);
+      if (!fileUrl) {
+        throw new Error('Failed to get file URL from Appwrite');
+      }
+      console.log('Appwrite file URL:', fileUrl); // Debug log
       // Fetch current bio
       const currentBio = await getBio();
-      const bio = currentBio.bio || currentBio || {};
+      console.log('Current bio:', currentBio); // Debug log
+      // Ensure required fields
+      if (!currentBio.name || !currentBio.title || !currentBio.bio || !currentBio.email) {
+        throw new Error('Bio is missing required fields. Please update your bio in the Bio Settings form.');
+      }
       // Update bio with image URL
       const updatedBio = {
-        ...bio,
+        name: currentBio.name,
+        title: currentBio.title,
+        bio: currentBio.bio,
+        email: currentBio.email,
+        phone: currentBio.phone || '',
         image: fileUrl,
+        skills: Array.isArray(currentBio.skills) ? currentBio.skills : [],
+        education: Array.isArray(currentBio.education) ? currentBio.education : [],
+        experience: Array.isArray(currentBio.experience) ? currentBio.experience : [],
+        social: Array.isArray(currentBio.social) ? currentBio.social : [],
+        resume: currentBio.resume || '',
       };
+      console.log('Sending updated bio:', updatedBio); // Debug log
       const response = await updateBio(updatedBio);
       toast.success('Profile photo uploaded successfully!');
       setFiles([]);
-      onSave([fileUrl]); // Keep onSave for consistency
+      onSave([fileUrl]);
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(`Failed to upload photo: ${error.message}`);

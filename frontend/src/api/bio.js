@@ -17,5 +17,5 @@ export const getBio = async () => {
     method: 'GET',
   });
   console.log('getBio API response:', response); // Debug log
-  return response.bio || response;
+  return response.bio || {}; // Return bio object or empty object
 };

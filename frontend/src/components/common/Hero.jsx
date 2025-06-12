@@ -5,25 +5,26 @@ import { useContext } from 'react';
 import { ThemeContext } from '@/contexts/ThemeContext.jsx';
 import { toast } from 'react-hot-toast';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
+import { getFileView } from '@/lib/appwrite/storage';
 
 function Hero({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
   const socialLinks = [
-    { 
-      icon: <Github className="w-5 h-5" />, 
+    {
+      icon: <Github className="w-5 h-5" />,
       url: bio.social?.find((s) => s?.name?.toLowerCase() === 'github')?.link || 'https://github.com',
-      name: 'GitHub'
+      name: 'GitHub',
     },
-    { 
-      icon: <Linkedin className="w-5 h-5" />, 
+    {
+      icon: <Linkedin className="w-5 h-5" />,
       url: bio.social?.find((s) => s?.name?.toLowerCase() === 'linkedin')?.link || 'https://linkedin.com',
-      name: 'LinkedIn'
+      name: 'LinkedIn',
     },
-    { 
-      icon: <Mail className="w-5 h-5" />, 
+    {
+      icon: <Mail className="w-5 h-5" />,
       url: `mailto:${bio.email || 'contact@example.com'}`,
-      name: 'Email'
+      name: 'Email',
     },
   ];
 
@@ -37,8 +38,7 @@ function Hero({ bio = {} }) {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.1 }}
         transition={{ duration: 1.5 }}
@@ -68,10 +68,11 @@ function Hero({ bio = {} }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              onError={(e) => (e.target.src = defaultProfilePic)}
             />
           </motion.div>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -81,7 +82,7 @@ function Hero({ bio = {} }) {
             Hello, I'm
           </motion.p>
 
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -90,7 +91,7 @@ function Hero({ bio = {} }) {
             {bio.name || 'Your Name'}
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
@@ -100,7 +101,7 @@ function Hero({ bio = {} }) {
             {bio.title || 'Your Title'}
           </motion.p>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
@@ -132,16 +133,14 @@ function Hero({ bio = {} }) {
             transition={{ duration: 0.5, delay: 0.7 }}
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="group flex items-center gap-2"
               onClick={handleDownload}
-              style={{ 
+              style={{
                 backgroundColor: colors.primary,
-                color: colors.buttonText
+                color: colors.buttonText,
               }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               <FileText className="w-5 h-5" />
               Download Resume
@@ -151,12 +150,10 @@ function Hero({ bio = {} }) {
               size="lg"
               asChild
               className="flex items-center gap-2"
-              style={{ 
+              style={{
                 borderColor: colors.primary,
-                color: colors.primary
+                color: colors.primary,
               }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               <a href="#contact">
                 <Mail className="w-5 h-5" />

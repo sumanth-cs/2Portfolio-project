@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Eye, Code } from 'lucide-react';
 import placeholder from '../../assets/placeholder.png';
+import { getFileView } from '@/lib/appwrite/storage';
 
 function ProjectCard({ project, index }) {
   return (
@@ -17,7 +18,7 @@ function ProjectCard({ project, index }) {
     >
       <div className="relative h-48 overflow-hidden group">
         <img
-          src={project.image || placeholder}
+          src={getFileView(project.image) || placeholder}
           alt={project.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => (e.target.src = placeholder)}

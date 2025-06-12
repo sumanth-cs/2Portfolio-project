@@ -31,6 +31,7 @@ function About({ bio = {} }) {
                 src={bio.image || defaultProfilePic}
                 alt="Profile"
                 className="w-full h-full object-cover"
+                onError={(e) => (e.target.src = defaultProfilePic)}
               />
             </motion.div>
             <div className="flex-1">

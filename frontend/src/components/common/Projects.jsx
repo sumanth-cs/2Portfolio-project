@@ -48,8 +48,10 @@ function Projects({ projects, loading }) {
                     onError={(e) => (e.target.src = placeholder)}
                   />
                   <motion.div
-                    className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4"
+                    initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                   >
                     {project.codeUrl && (
                       <motion.a
@@ -82,7 +84,7 @@ function Projects({ projects, loading }) {
                     {project.tags?.map((tag, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1 text-xs rounded-full bg-primary-100 dark:bg-primary-900/30"
+                        className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-100"
                       >
                         {tag}
                       </span>

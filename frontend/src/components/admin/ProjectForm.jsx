@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect, useContext } from 'react';
 import { createProject, getProjects, updateProject, deleteProject } from '../../api/projects.js';
-import { uploadFile } from '../../api/upload.js';
+import { uploadFile } from '../../lib/appwrite/storage.js'; // Use Appwrite
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -49,7 +49,7 @@ function ProjectForm({ onSave }) {
     try {
       let imageUrl = data.image || '';
       if (imageFile) {
-        imageUrl = await uploadFile(imageFile);
+        imageUrl = await uploadFile(imageFile); // Use Appwrite
       }
       const projectData = {
         ...data,
