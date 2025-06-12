@@ -11,14 +11,24 @@ import Footer from '../components/common/Footer';
 import { usePortfolio } from '../contexts/PortfolioContext.jsx';
 
 function Home() {
-  const { portfolioData, loading, error } = usePortfolio();
+  const { portfolioData } = usePortfolio();
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  // Show loading state if data is still loading
+  if (portfolioData.loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  // Show error state if there was an error
+  if (portfolioData.error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">Error loading data: {portfolioData.error}</div>
+      </div>
+    );
   }
 
   return (
@@ -30,10 +40,10 @@ function Home() {
       <Header />
       <Hero bio={portfolioData.bio || {}} />
       <About bio={portfolioData.bio || {}} />
-      <Skills skills={portfolioData.bio?.skills || []} loading={loading} />
-      <Experience experiences={portfolioData.bio?.experience || []} loading={loading} />
-      <Education educations={portfolioData.bio?.education || []} loading={loading} />
-      <Projects projects={portfolioData.projects || []} loading={loading} />
+      <Skills skills={portfolioData.bio?.skills || []} />
+      <Experience experiences={portfolioData.bio?.experience || []} />
+      <Education educations={portfolioData.bio?.education || []} />
+      <Projects projects={portfolioData.projects || []} />
       <Contact />
       <Footer />
     </motion.div>

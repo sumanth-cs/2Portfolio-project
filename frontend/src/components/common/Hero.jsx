@@ -5,36 +5,47 @@ import { useContext } from 'react';
 import { ThemeContext } from '@/contexts/ThemeContext.jsx';
 import { toast } from 'react-hot-toast';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
-import { getFileView } from '@/lib/appwrite/storage';
 
 function Hero({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
+  // Provide default values for all required properties
+  const safeBio = {
+    name: 'Your Name',
+    title: 'Your Title',
+    email: 'your@email.com',
+    image: defaultProfilePic,
+    social: [],
+    resume: '',
+    ...bio
+  };
+
   const socialLinks = [
     {
       icon: <Github className="w-5 h-5" />,
-      url: bio.social?.find((s) => s?.name?.toLowerCase() === 'github')?.link || 'https://github.com',
+      url: safeBio.social.find((s) => s?.name?.toLowerCase() === 'github')?.link || 'https://github.com',
       name: 'GitHub',
     },
     {
       icon: <Linkedin className="w-5 h-5" />,
-      url: bio.social?.find((s) => s?.name?.toLowerCase() === 'linkedin')?.link || 'https://linkedin.com',
+      url: safeBio.social.find((s) => s?.name?.toLowerCase() === 'linkedin')?.link || 'https://linkedin.com',
       name: 'LinkedIn',
     },
     {
       icon: <Mail className="w-5 h-5" />,
-      url: `mailto:${bio.email || 'contact@example.com'}`,
+      url: `mailto:${safeBio.email}`,
       name: 'Email',
     },
   ];
 
   const handleDownload = () => {
-    if (bio.resume) {
-      window.open(bio.resume, '_blank');
+    if (safeBio.resume) {
+      window.open(safeBio.resume, '_blank');
     } else {
       toast.error('No resume available for download.');
     }
   };
+
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
@@ -88,7 +99,7 @@ function Hero({ bio = {} }) {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600"
           >
-            {bio.name || 'Your Name'}
+            {safeBio.name || 'Your Name'}
           </motion.h1>
 
           <motion.p

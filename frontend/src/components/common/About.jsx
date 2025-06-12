@@ -6,9 +6,14 @@ import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 function About({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
-  if (!bio.name) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
+  // Provide default values for all required properties
+  const safeBio = {
+    name: 'Your Name',
+    title: 'Your Title',
+    bio: 'A brief description about yourself.',
+    image: defaultProfilePic,
+    ...bio
+  };
 
   return (
     <section id="about" className="py-20 px-4">
@@ -28,7 +33,7 @@ function About({ bio = {} }) {
               className="w-48 h-48 rounded-full overflow-hidden shadow-lg"
             >
               <img
-                src={bio.image || defaultProfilePic}
+                src={safeBio.image || defaultProfilePic}
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => (e.target.src = defaultProfilePic)}
@@ -36,7 +41,7 @@ function About({ bio = {} }) {
             </motion.div>
             <div className="flex-1">
               <p className="text-lg leading-relaxed" style={{ color: colors.text }}>
-                {bio.bio || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
+                {safeBio.bio}
               </p>
             </div>
           </div>

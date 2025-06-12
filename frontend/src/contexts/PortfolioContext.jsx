@@ -1,38 +1,72 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getBio } from '../api/bio';
-import { getProjects } from '../api/projects';
+import { getBio, getProjects, getTheme } from '../api/api';
 
-export const PortfolioContext = createContext();
+const PortfolioContext = createContext();
 
-export function PortfolioProvider({ children }) {
-  const [portfolioData, setPortfolioData] = useState({ bio: {}, projects: [] });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const PortfolioProvider = ({ children }) => {
+  const [portfolioData, setPortfolioData] = useState({
+    bio: null,
+    projects: [],
+    theme: null,
+    loading: true,
+    error: null
+  });
+
+  const fetchData = async () => {
+    try {
+      setPortfolioData(prev => ({ ...prev, loading: true }));
+      
+      const [bioResponse, projectsResponse, themeResponse] = await Promise.all([
+        getBio(),
+        getProjects(),
+        getTheme()
+      ]);
+
+      setPortfolioData({
+        bio: bioResponse?.bio || null,
+        projects: projectsResponse?.projects || [],
+        theme: themeResponse?.theme || null,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      console.error('Error fetching portfolio data:', error);
+      setPortfolioData({
+        bio: null,
+        projects: [],
+        theme: null,
+        loading: false,
+        error: error.message
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const bioResponse = await getBio();
-        const projectsResponse = await getProjects();
-        setPortfolioData({
-          bio: bioResponse || {},
-          projects: projectsResponse?.projects || [],
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
+  const updatePortfolio = (updates) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      ...updates
+    }));
+  };
+
+  const refetch = () => {
+    fetchData();
+  };
+
   return (
-    <PortfolioContext.Provider value={{ portfolioData, loading, error }}>
+    <PortfolioContext.Provider 
+      value={{ 
+        portfolioData, 
+        updatePortfolio,
+        refetch
+      }}
+    >
       {children}
     </PortfolioContext.Provider>
   );
-}
+};
 
 export const usePortfolio = () => useContext(PortfolioContext);
