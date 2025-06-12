@@ -9,7 +9,15 @@ export const createUserProject = async (req, res, next) => {
     if (!title) {
       return res.status(400).json({ success: false, message: 'Title is required' });
     }
-    const project = await createProject(req.userId, title, description, image, tags, liveUrl, codeUrl);
+    const project = await createProject(
+      req.userId,
+      title,
+      description,
+      image,
+      tags,
+      liveUrl,
+      codeUrl
+    );
     res.status(201).json({ success: true, project });
   } catch (error) {
     next(error);
@@ -41,7 +49,16 @@ export const updateUserProject = async (req, res, next) => {
     if (!id || !title) {
       return res.status(400).json({ success: false, message: 'ID and title are required' });
     }
-    const project = await updateProject(id, req.userId, title, description, image, tags, liveUrl, codeUrl);
+    const project = await updateProject(
+      id,
+      req.userId,
+      title,
+      description,
+      image,
+      tags,
+      liveUrl,
+      codeUrl
+    );
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found' });
     }

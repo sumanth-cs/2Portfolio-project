@@ -8,14 +8,14 @@ export const createProject = async (projectData) => {
     method: 'POST',
     body: JSON.stringify(projectData),
   });
-  return response.project;
+  return response;
 };
 
 export const getProjects = async () => {
   const response = await apiFetch('/api/projects', {
     method: 'GET',
   });
-  return response.projects;
+  return response;
 };
 
 export const updateProject = async (projectData) => {
@@ -23,5 +23,5 @@ export const updateProject = async (projectData) => {
     method: 'PUT',
     body: JSON.stringify(projectData),
   });
-  return response.project;
+  return response;
 };

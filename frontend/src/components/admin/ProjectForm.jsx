@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect, useContext } from 'react';
 import { createProject, getProjects, updateProject } from '../../api/projects.js';
-import { uploadFile } from '../../api/upload.js'; // Updated import
+import { uploadFile } from '../../api/upload.js';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -9,14 +9,17 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'react-hot-toast';
 import { ThemeContext } from '@/contexts/ThemeContext.jsx';
+import { AuthContext } from '@/contexts/AuthContext.jsx';
 
 function ProjectForm({ onSave }) {
   const { colors } = useContext(ThemeContext);
+  const { user } = useContext(AuthContext);
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm();
   const [projects, setProjects] = useState([]);
@@ -31,7 +34,7 @@ function ProjectForm({ onSave }) {
   const fetchProjects = async () => {
     try {
       const data = await getProjects();
-      setProjects(data.projects || []); // Adjust based on API response
+      setProjects(data.projects || []);
     } catch (error) {
       toast.error('Failed to load projects');
     }
@@ -53,21 +56,21 @@ function ProjectForm({ onSave }) {
         image: imageUrl,
         tags: data.tags ? data.tags.split(',').map((tag) => tag.trim()) : [],
       };
-      let project;
+      let response;
       if (editingId) {
-        project = await updateProject({ id: editingId, ...projectData });
+        response = await updateProject({ id: editingId, ...projectData });
       } else {
-        project = await createProject(projectData);
+        response = await createProject(projectData);
       }
       setProjects((prev) =>
         editingId
-          ? prev.map((p) => (p._id === editingId ? project.project : p))
-          : [...prev, project.project]
+          ? prev.map((p) => (p._id === editingId ? response.project : p))
+          : [...prev, response.project]
       );
       reset();
       setEditingId(null);
       setImageFile(null);
-      onSave(project.project);
+      onSave(response.project);
       toast.success('Project saved');
     } catch (error) {
       toast.error(`Failed to save project: ${error.message}`);
@@ -77,21 +80,19 @@ function ProjectForm({ onSave }) {
   };
 
   const handleEdit = (project) => {
-    reset({
-      title: project.title,
-      description: project.description,
-      image: project.image,
-      tags: project.tags?.join(', '),
-      liveUrl: project.liveUrl,
-      codeUrl: project.codeUrl,
-    });
+    setValue('title', project.title || '');
+    setValue('description', project.description || '');
+    setValue('image', project.image || '');
+    setValue('tags', project.tags?.join(', ') || '');
+    setValue('liveUrl', project.liveUrl || '');
+    setValue('codeUrl', project.codeUrl || '');
     setEditingId(project._id);
     setImageFile(null);
   };
 
   const handleDelete = async (id) => {
     try {
-      // Add deleteProject API if needed
+      // Implement deleteProject API if needed
       setProjects((prev) => prev.filter((p) => p._id !== id));
       toast.success('Project deleted');
     } catch (error) {
