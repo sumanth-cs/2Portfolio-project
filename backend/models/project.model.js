@@ -13,7 +13,7 @@ const projectSchema = new mongoose.Schema({
   codeUrl: { type: String },
 }, { timestamps: true });
 
-const Project = mongoose.model('Project', projectSchema);
+export const Project = mongoose.model('Project', projectSchema);
 
 export const createProject = async (userId, title, description, image, tags, liveUrl, codeUrl) => {
   const project = new Project({ userId, title, description, image, tags, liveUrl, codeUrl });

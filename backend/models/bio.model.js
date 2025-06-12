@@ -10,6 +10,7 @@ const bioSchema = new mongoose.Schema({
   bio: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String },
+  image: { type: String }, // Add image field
   skills: [{ name: String, level: { type: String, enum: ['Basic', 'Intermediate', 'Expert'] } }],
   education: [{ degree: String, institution: String, period: String }],
   experience: [{ title: String, company: String, period: String, description: String }],

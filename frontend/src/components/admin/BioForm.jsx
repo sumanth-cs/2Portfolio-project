@@ -15,12 +15,13 @@ import {
   SelectValue,
 } from "../ui/select.jsx";
 import { toast } from "react-hot-toast";
-import { ThemeContext } from '@/contexts/ThemeContext.jsx';
+import { ThemeContext } from "@/contexts/ThemeContext.jsx";
 
 function BioForm({ onSave }) {
   const {
     register,
     handleSubmit,
+    reset,
     setValue,
     formState: { errors },
   } = useForm();
@@ -49,23 +50,60 @@ function BioForm({ onSave }) {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const bio = await getBio();
-        setValue("name", bio.name || "");
-        setValue("title", bio.title || "");
-        setValue("bio", bio.bio || "");
-        setValue("email", bio.email || "");
-        setValue("phone", bio.phone || "");
-        setSkills(bio.skills || []);
-        setEducation(bio.education || []);
-        setExperience(bio.experience || []);
-        setSocial(bio.social || []);
-        setValue("resume", bio.resume || "");
+        const response = await getBio();
+        // console.log("API Response:", response);
+
+        // Extract bio data - handle both direct response and nested bio property
+        // const bioData = response?.bio || response;
+        // console.log("Bio Data:", bioData);
+
+        // First reset the form with basic fields
+        reset({
+          name: response?.name || "",
+          title: response?.title || "",
+          bio: response?.bio || "",
+          email: response?.email || "",
+          phone: response?.phone || "",
+          resume: response?.resume || "",
+        });
+
+        // Then set the array states
+        setSkills(Array.isArray(response?.skills) ? response.skills : []);
+        setEducation(
+          Array.isArray(response?.education) ? response.education : []
+        );
+        setExperience(
+          Array.isArray(response?.experience) ? response.experience : []
+        );
+        setSocial(Array.isArray(response?.social) ? response.social : []);
+
+        // If you need to set any other form values individuallyresponse
+        if (response?.name) setValue("name", response.name);
+        if (response?.title) setValue("title", response.title);
+        if (response?.bio) setValue("bio", response.bio);
+        if (response?.email) setValue("email", response.email);
+        if (response?.phone) setValue("phone", response.phone);
+        if (response?.resume) setValue("resume", response.resume);
       } catch (error) {
         console.error("Failed to fetch bio:", error);
+        toast.error("Failed to load bio data");
+        reset({
+          name: "",
+          title: "",
+          bio: "",
+          email: "",
+          phone: "",
+          resume: "",
+        });
+        setSkills([]);
+        setEducation([]);
+        setExperience([]);
+        setSocial([]);
       }
     };
+
     fetchBio();
-  }, [setValue]);
+  }, [reset, setValue]);
 
   const handleAddSkill = () => {
     if (newSkill.name.trim()) {
@@ -127,17 +165,37 @@ function BioForm({ onSave }) {
         resumeUrl = await uploadFile(resumeFile);
       }
       const bioData = {
-        ...data,
+        name: data.name,
+        title: data.title,
+        bio: data.bio,
+        email: data.email,
+        phone: data.phone,
         skills,
         education,
         experience,
         social,
         resume: resumeUrl,
       };
-      await updateBio(bioData);
+      console.log("Submitting bio data:", bioData);
+      const response = await updateBio(bioData);
+      console.log("Update bio response:", response);
       toast.success("Bio updated successfully!");
-      onSave(bioData);
+      onSave(response.bio || response);
+      reset({
+        name: bioData.name,
+        title: bioData.title,
+        bio: bioData.bio,
+        email: bioData.email,
+        phone: bioData.phone,
+        resume: resumeUrl,
+      });
+      setSkills(bioData.skills);
+      setEducation(bioData.education);
+      setExperience(bioData.experience);
+      setSocial(bioData.social);
+      setResumeFile(null);
     } catch (error) {
+      console.error("Failed to update bio:", error);
       toast.error(`Failed to update bio: ${error.message}`);
     } finally {
       setLoading(false);
@@ -148,7 +206,7 @@ function BioForm({ onSave }) {
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6 bg-white p-6 rounded-lg "
+      className="space-y-6 bg-white p-6 rounded-lg"
     >
       <h3 className="text-2xl font-bold">Bio Settings</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -237,10 +295,10 @@ function BioForm({ onSave }) {
                     setSkills(newSkills);
                   }}
                 >
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger className="w-32 bg-white">
                     <SelectValue placeholder="Level" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     <SelectItem value="Basic">Basic</SelectItem>
                     <SelectItem value="Intermediate">Intermediate</SelectItem>
                     <SelectItem value="Expert">Expert</SelectItem>
@@ -268,10 +326,10 @@ function BioForm({ onSave }) {
                   setNewSkill({ ...newSkill, level: value })
                 }
               >
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32 bg-white">
                   <SelectValue placeholder="Level" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="Basic">Basic</SelectItem>
                   <SelectItem value="Intermediate">Intermediate</SelectItem>
                   <SelectItem value="Expert">Expert</SelectItem>

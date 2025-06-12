@@ -47,11 +47,6 @@ function AdminDashboard() {
       <header className="bg-white shadow-sm">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/">
-                <Home className="h-6 w-6" />
-              </Link>
-            </Button>
             <h1 className="text-xl font-bold">Dashboard</h1>
           </div>
           <div className="flex items-center space-x-2">

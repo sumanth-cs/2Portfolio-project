@@ -25,3 +25,10 @@ export const updateProject = async (projectData) => {
   });
   return response;
 };
+
+export const deleteProject = async (id) => {
+  const response = await apiFetch(`/api/projects/${id}`, {
+    method: 'DELETE',
+  });
+  return response;
+};

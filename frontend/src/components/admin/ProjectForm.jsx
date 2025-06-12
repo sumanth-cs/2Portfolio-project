@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect, useContext } from 'react';
-import { createProject, getProjects, updateProject } from '../../api/projects.js';
+import { createProject, getProjects, updateProject, deleteProject } from '../../api/projects.js';
 import { uploadFile } from '../../api/upload.js';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -92,7 +92,7 @@ function ProjectForm({ onSave }) {
 
   const handleDelete = async (id) => {
     try {
-      // Implement deleteProject API if needed
+      await deleteProject(id);
       setProjects((prev) => prev.filter((p) => p._id !== id));
       toast.success('Project deleted');
     } catch (error) {

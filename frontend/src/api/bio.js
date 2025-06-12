@@ -8,12 +8,14 @@ export const updateBio = async (bioData) => {
     method: 'PUT',
     body: JSON.stringify(bioData),
   });
-  return response.bio;
+  console.log('updateBio API response:', response); // Debug log
+  return response.bio || response;
 };
 
 export const getBio = async () => {
   const response = await apiFetch('/api/bio', {
     method: 'GET',
   });
-  return response.bio;
+  console.log('getBio API response:', response); // Debug log
+  return response.bio || response;
 };

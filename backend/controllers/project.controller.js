@@ -1,7 +1,7 @@
 /**
  * Project controller for handling project-related operations.
  */
-import { createProject, getProjects, getProjectByUserId, updateProject } from '../models/project.model.js';
+import { createProject, getProjects, getProjectByUserId, updateProject, Project } from '../models/project.model.js';
 
 export const createUserProject = async (req, res, next) => {
   try {
@@ -10,7 +10,7 @@ export const createUserProject = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Title is required' });
     }
     const project = await createProject(
-      req.userId,
+      req.user.id, // Use req.user.id
       title,
       description,
       image,
@@ -26,7 +26,7 @@ export const createUserProject = async (req, res, next) => {
 
 export const getUserProjects = async (req, res, next) => {
   try {
-    const projects = await getProjects(req.userId);
+    const projects = await getProjects(req.user.id);
     res.status(200).json({ success: true, projects: projects || [] });
   } catch (error) {
     next(error);
@@ -51,7 +51,7 @@ export const updateUserProject = async (req, res, next) => {
     }
     const project = await updateProject(
       id,
-      req.userId,
+      req.user.id,
       title,
       description,
       image,
@@ -63,6 +63,19 @@ export const updateUserProject = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Project not found' });
     }
     res.status(200).json({ success: true, project });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUserProject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const project = await Project.findOneAndDelete({ _id: id, userId: req.user.id });
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+    res.status(200).json({ success: true, message: 'Project deleted' });
   } catch (error) {
     next(error);
   }
