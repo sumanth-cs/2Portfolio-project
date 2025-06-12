@@ -1,6 +1,3 @@
-/**
- * API functions for bio operations.
- */
 import { apiFetch } from './api.js';
 
 export const updateBio = async (bioData) => {
@@ -9,7 +6,7 @@ export const updateBio = async (bioData) => {
     body: JSON.stringify(bioData),
   });
   console.log('updateBio API response:', response); // Debug log
-  return response.bio || response;
+  return response;
 };
 
 export const getBio = async () => {
@@ -17,5 +14,5 @@ export const getBio = async () => {
     method: 'GET',
   });
   console.log('getBio API response:', response); // Debug log
-  return response.bio || {}; // Return bio object or empty object
+  return response.bio || {};
 };

@@ -9,43 +9,39 @@ import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 function Hero({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
-  // Provide default values for all required properties
-  const safeBio = {
-    name: 'Your Name',
-    title: 'Your Title',
-    email: 'your@email.com',
-    image: defaultProfilePic,
-    social: [],
-    resume: '',
-    ...bio
-  };
+  // Use bio directly, with minimal fallbacks
+  const name = bio.name || 'John Doe';
+  const title = bio.title || 'Full Stack Developer';
+  const email = bio.email || 'john.doe@example.com';
+  const image = bio.image || defaultProfilePic;
+  const social = Array.isArray(bio.social) ? bio.social : [];
+  const resume = bio.resume || '';
 
   const socialLinks = [
     {
       icon: <Github className="w-5 h-5" />,
-      url: safeBio.social.find((s) => s?.name?.toLowerCase() === 'github')?.link || 'https://github.com',
+      url: social.find((s) => s?.name?.toLowerCase() === 'github')?.link || 'https://github.com',
       name: 'GitHub',
     },
     {
       icon: <Linkedin className="w-5 h-5" />,
-      url: safeBio.social.find((s) => s?.name?.toLowerCase() === 'linkedin')?.link || 'https://linkedin.com',
+      url: social.find((s) => s?.name?.toLowerCase() === 'linkedin')?.link || 'https://linkedin.com',
       name: 'LinkedIn',
     },
     {
       icon: <Mail className="w-5 h-5" />,
-      url: `mailto:${safeBio.email}`,
+      url: `mailto:${email}`,
       name: 'Email',
     },
   ];
 
   const handleDownload = () => {
-    if (safeBio.resume) {
-      window.open(safeBio.resume, '_blank');
+    if (resume) {
+      window.open(resume, '_blank');
     } else {
       toast.error('No resume available for download.');
     }
   };
-
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
@@ -73,7 +69,7 @@ function Hero({ bio = {} }) {
             className="mx-auto mb-8 w-40 h-40 rounded-full border-4 border-white/20 overflow-hidden shadow-xl"
           >
             <motion.img
-              src={bio.image || defaultProfilePic}
+              src={image}
               alt="Profile"
               className="w-full h-full object-cover"
               initial={{ opacity: 0 }}
@@ -99,7 +95,7 @@ function Hero({ bio = {} }) {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600"
           >
-            {safeBio.name || 'Your Name'}
+            {name}
           </motion.h1>
 
           <motion.p
@@ -109,7 +105,7 @@ function Hero({ bio = {} }) {
             className="text-xl md:text-2xl opacity-80 mb-8"
             style={{ color: colors.text }}
           >
-            {bio.title || 'Your Title'}
+            {title}
           </motion.p>
 
           <motion.div

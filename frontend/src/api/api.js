@@ -1,7 +1,3 @@
-/**
- * API client using fetch for backend communication.
- */
-// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://twoportfolio-project.onrender.com";
 
 // Default data for non-authenticated users
@@ -15,24 +11,24 @@ const DEFAULT_BIO = {
   skills: [
     { name: 'JavaScript', level: 'Expert' },
     { name: 'React', level: 'Expert' },
-    { name: 'Node.js', level: 'Intermediate' }
+    { name: 'Node.js', level: 'Intermediate' },
   ],
   education: [
-    { degree: 'B.Sc Computer Science', institution: 'Tech University', period: '2014-2018' }
+    { degree: 'B.Sc Computer Science', institution: 'Tech University', period: '2014-2018' },
   ],
   experience: [
-    { 
-      title: 'Senior Developer', 
-      company: 'Tech Corp', 
-      period: '2019-Present', 
-      description: 'Leading development teams' 
-    }
+    {
+      title: 'Senior Developer',
+      company: 'Tech Corp',
+      period: '2019-Present',
+      description: 'Leading development teams',
+    },
   ],
   social: [
     { name: 'GitHub', link: 'https://github.com' },
-    { name: 'LinkedIn', link: 'https://linkedin.com' }
+    { name: 'LinkedIn', link: 'https://linkedin.com' },
   ],
-  resume: ''
+  resume: '',
 };
 
 const DEFAULT_PROJECTS = [
@@ -42,7 +38,7 @@ const DEFAULT_PROJECTS = [
     description: 'A personal portfolio website',
     tags: ['React', 'TailwindCSS'],
     liveUrl: '#',
-    codeUrl: '#'
+    codeUrl: '#',
   },
   {
     _id: 'default2',
@@ -50,15 +46,15 @@ const DEFAULT_PROJECTS = [
     description: 'Online shopping application',
     tags: ['Node.js', 'MongoDB'],
     liveUrl: '#',
-    codeUrl: '#'
-  }
+    codeUrl: '#',
+  },
 ];
 
 const DEFAULT_THEME = {
   text: '#000000',
   background: '#ffffff',
   primary: '#3b82f6',
-  buttonText: '#ffffff'
+  buttonText: '#ffffff',
 };
 
 export const apiFetch = async (url, options = {}) => {
@@ -74,19 +70,17 @@ export const apiFetch = async (url, options = {}) => {
   try {
     const response = await fetch(`${API_BASE_URL}${url}`, {
       ...options,
-      headers
+      headers,
     });
-
-    // Handle unauthorized requests by returning default data
-    if (response.status === 401) {
-      if (url === '/api/bio') return { bio: DEFAULT_BIO };
-      if (url === '/api/projects') return { projects: DEFAULT_PROJECTS };
-      if (url === '/api/theme') return { theme: DEFAULT_THEME };
-      throw new Error('Authentication required');
-    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      if (response.status === 401 && !token) {
+        // Return default data for unauthenticated requests
+        if (url === '/api/bio') return { bio: DEFAULT_BIO };
+        if (url === '/api/projects') return { projects: DEFAULT_PROJECTS };
+        if (url === '/api/theme') return { theme: DEFAULT_THEME };
+      }
       throw new Error(errorData.message || `HTTP error ${response.status}`);
     }
 
@@ -102,7 +96,7 @@ export const getBio = async () => {
     const response = await apiFetch('/api/bio', { method: 'GET' });
     return response.bio || DEFAULT_BIO;
   } catch (error) {
-    console.error('Failed to fetch bio, using default:', error);
+    console.error('Failed to fetch bio:', error);
     return DEFAULT_BIO;
   }
 };
@@ -112,7 +106,7 @@ export const getProjects = async () => {
     const response = await apiFetch('/api/projects', { method: 'GET' });
     return response.projects || DEFAULT_PROJECTS;
   } catch (error) {
-    console.error('Failed to fetch projects, using default:', error);
+    console.error('Failed to fetch projects:', error);
     return DEFAULT_PROJECTS;
   }
 };
@@ -122,11 +116,10 @@ export const getTheme = async () => {
     const response = await apiFetch('/api/theme', { method: 'GET' });
     return response.theme || DEFAULT_THEME;
   } catch (error) {
-    console.error('Failed to fetch theme, using default:', error);
+    console.error('Failed to fetch theme:', error);
     return DEFAULT_THEME;
   }
 };
-
 
 export const signup = async (name, email, password) => {
   return apiFetch('/api/auth/signup', {

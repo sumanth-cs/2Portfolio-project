@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from 'react';
-import { getCurrentUser, logout } from '../api/api.js';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { getCurrentUser, logout, login, signup } from '../api/api.js';
 
 export const AuthContext = createContext();
 
@@ -30,9 +30,9 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email, password) => {
+  const loginUser = async (email, password) => {
     try {
-      const response = await import('../api/api.js').then(({ login }) => login(email, password));
+      const response = await login(email, password);
       localStorage.setItem('token', response.token);
       setUser(response.user);
       return response;
@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (name, email, password) => {
+  const signupUser = async (name, email, password) => {
     try {
-      const response = await import('../api/api.js').then(({ signup }) => signup(name, email, password));
+      const response = await signup(name, email, password);
       localStorage.setItem('token', response.token);
       setUser(response.user);
       return response;
@@ -63,8 +63,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, signout }}>
+    <AuthContext.Provider value={{ user, loading, login: loginUser, signup: signupUser, signout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+// Custom hook to use the AuthContext
+export const useAuth = () => useContext(AuthContext);

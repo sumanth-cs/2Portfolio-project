@@ -16,6 +16,7 @@ import {
 } from '../ui/select.jsx';
 import { toast } from 'react-hot-toast';
 import { ThemeContext } from '@/contexts/ThemeContext.jsx';
+import { usePortfolio } from '@/contexts/PortfolioContext.jsx';
 
 function BioForm({ onSave }) {
   const {
@@ -45,30 +46,27 @@ function BioForm({ onSave }) {
   const [newSocial, setNewSocial] = useState({ name: '', link: '' });
   const [resumeFile, setResumeFile] = useState(null);
   const { colors } = useContext(ThemeContext);
+  const { refetch } = usePortfolio();
 
   useEffect(() => {
     const fetchBio = async () => {
       try {
         const bio = await getBio();
         console.log('BioForm fetched bio:', bio); // Debug log
-        reset({
+        const bioData = {
           name: bio?.name || '',
           title: bio?.title || '',
           bio: bio?.bio || '',
           email: bio?.email || '',
           phone: bio?.phone || '',
           resume: bio?.resume || '',
-        });
+        };
+        reset(bioData);
         setSkills(Array.isArray(bio?.skills) ? bio.skills : []);
         setEducation(Array.isArray(bio?.education) ? bio.education : []);
         setExperience(Array.isArray(bio?.experience) ? bio.experience : []);
         setSocial(Array.isArray(bio?.social) ? bio.social : []);
-        if (bio?.name) setValue('name', bio.name);
-        if (bio?.title) setValue('title', bio.title);
-        if (bio?.bio) setValue('bio', bio.bio);
-        if (bio?.email) setValue('email', bio.email);
-        if (bio?.phone) setValue('phone', bio.phone);
-        if (bio?.resume) setValue('resume', bio.resume);
+        Object.entries(bioData).forEach(([key, value]) => setValue(key, value));
       } catch (error) {
         console.error('Failed to fetch bio:', error);
         toast.error('Failed to load bio data');
@@ -160,7 +158,9 @@ function BioForm({ onSave }) {
         social,
         resume: resumeUrl,
       };
+      console.log('Submitting bio data:', bioData); // Debug log
       const response = await updateBio(bioData);
+      console.log('Bio update response:', response); // Debug log
       toast.success('Bio updated successfully!');
       onSave(response.bio || response);
       reset({
@@ -176,6 +176,7 @@ function BioForm({ onSave }) {
       setExperience(bioData.experience);
       setSocial(bioData.social);
       setResumeFile(null);
+      await refetch(); // Refresh PortfolioContext data
     } catch (error) {
       console.error('Failed to update bio:', error);
       toast.error(`Failed to update bio: ${error.message}`);
