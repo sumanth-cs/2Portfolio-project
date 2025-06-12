@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { Github, ExternalLink, Eye, Code } from 'lucide-react';
+import placeholder from '../../assets/placeholder.png';
 
 function ProjectCard({ project, index }) {
   return (
@@ -9,19 +9,20 @@ function ProjectCard({ project, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      whileHover={{ 
+      whileHover={{
         y: -10,
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
       }}
       className="rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
     >
       <div className="relative h-48 overflow-hidden group">
         <img
-          src={project.image || '/placeholder-project.jpg'}
+          src={project.image || placeholder}
           alt={project.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={(e) => (e.target.src = placeholder)}
         />
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-50 transition-opacity duration-300">
           {project.codeUrl && (
             <motion.a
               href={project.codeUrl}
@@ -55,10 +56,10 @@ function ProjectCard({ project, index }) {
         </p>
         <div className="flex flex-wrap gap-2 mb-4">
           {project.tags?.map((tag, i) => (
-            <motion.span 
+            <motion.span
               key={i}
               whileHover={{ scale: 1.05 }}
-              className="px-3 py-1 text-xs rounded-full"
+              className="px-3 py-1 text-xs rounded-full bg-primary-100 dark:bg-primary-900/30"
             >
               {tag}
             </motion.span>

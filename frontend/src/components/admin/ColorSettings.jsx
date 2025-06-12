@@ -7,6 +7,7 @@ import { Label } from '../ui/label';
 
 const ColorSettings = () => {
   const { colors, updateColors } = useTheme();
+  
   const [activeColor, setActiveColor] = useState(null);
 
   const colorOptions = [
@@ -60,7 +61,10 @@ const ColorSettings = () => {
                 onChange={(e) => handleColorChange(e.target.value)}
                 className="px-3 py-2 border rounded flex-1"
               />
-              <Button onClick={() => setActiveColor(null)}>Done</Button>
+              <Button onClick={() => setActiveColor(null)} style={{ 
+                backgroundColor: colors.primary,
+                color: colors.buttonText
+              }}>Done</Button>
             </div>
           </div>
         )}
