@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import Header from '../components/common/Header';
 import Hero from '../components/common/Hero';
 import About from '../components/common/About';
@@ -8,28 +10,34 @@ import Education from '../components/common/Education';
 import Projects from '../components/common/Projects';
 import Contact from '../components/common/Contact';
 import Footer from '../components/common/Footer';
-import { usePortfolio } from '../contexts/PortfolioContext.jsx';
+import { usePortfolio } from '../contexts/PortfolioContext';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../components/ui/button';
+import { DEFAULT_BIO, DEFAULT_PROJECTS } from '@/api/api';
 
 function Home() {
-  const { portfolioData } = usePortfolio();
+  const { userId } = useParams();
+  const { user } = useAuth();
+  const { portfolioData, getPortfolioByUserId } = usePortfolio();
 
-  // Show loading state if data is still loading
+  useEffect(() => {
+    if (userId) {
+      getPortfolioByUserId(userId);
+    }
+  }, [userId, getPortfolioByUserId]);
+
   if (portfolioData.loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  // Show error state if there was an error
-  if (portfolioData.error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-500">Error loading data: {portfolioData.error}</div>
-      </div>
-    );
-  }
+  // Determine if we're viewing someone else's portfolio
+  const isViewingOtherPortfolio = userId && userId !== user?.id;
+  const displayBio = portfolioData.bio || DEFAULT_BIO;
+  const displayProjects = portfolioData.projects.length > 0 ? portfolioData.projects : DEFAULT_PROJECTS;
 
   return (
     <motion.div
@@ -38,12 +46,28 @@ function Home() {
       transition={{ duration: 0.5 }}
     >
       <Header />
-      <Hero bio={portfolioData.bio || {}} />
-      <About bio={portfolioData.bio || {}} />
-      <Skills skills={portfolioData.bio?.skills || []} />
-      <Experience experiences={portfolioData.bio?.experience || []} />
-      <Education educations={portfolioData.bio?.education || []} />
-      <Projects projects={portfolioData.projects || []} />
+      
+      {isViewingOtherPortfolio && (
+        <div className="bg-blue-50 text-blue-800 p-4 text-center">
+          <p>You're viewing {displayBio.name}'s portfolio</p>
+          {user ? (
+            <Link to="/">
+              <Button className="mt-2">Back to my portfolio</Button>
+            </Link>
+          ) : (
+            <Link to="/signup">
+              <Button className="mt-2">Create your own portfolio</Button>
+            </Link>
+          )}
+        </div>
+      )}
+
+      <Hero bio={displayBio} />
+      <About bio={displayBio} />
+      <Skills skills={displayBio.skills} />
+      <Experience experiences={displayBio.experience} />
+      <Education educations={displayBio.education} />
+      <Projects projects={displayProjects} />
       <Contact />
       <Footer />
     </motion.div>

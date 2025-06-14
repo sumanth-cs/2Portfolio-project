@@ -1,14 +1,16 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.middleware.js';
-import { createUserBio, getBio, updateUserBio } from '../controllers/bio.controller.js';
+import { getBio, updateUserBio, getBioByUserId } from '../controllers/bio.controller.js';
 
 const router = express.Router();
 
-// Public and authenticated bio route
-router.get('/', getBio);
+// GET bio for current user (authenticated)
+router.get('/', authenticate, getBio);
 
-// Protected routes
+// GET bio by user ID (public)
+router.get('/:userId', getBioByUserId);
+
+// Update bio (authenticated)
 router.put('/', authenticate, updateUserBio);
-router.post('/', authenticate, createUserBio);
 
 export default router;

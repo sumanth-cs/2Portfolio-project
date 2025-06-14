@@ -1,103 +1,151 @@
-import { getBioByUserId, updateBio, createBio } from '../models/bio.model.js';
+import mongoose from 'mongoose';
+import { getBioByUserId as getBioFromModel, updateBio, createBio } from '../models/bio.model.js';
 
-export const getBio = async (req, res) => {
+export const getBio = async (req, res, next) => {
   try {
-    if (!req.user || !req.user.id) {
-      // Return default bio for unauthenticated users
-      const defaultBio = {
-        name: 'John Doe',
-        title: 'Full Stack Developer',
-        bio: 'Experienced developer with a passion for creating web applications.',
-        email: 'john.doe@example.com',
-        phone: '+1 (555) 123-4567',
-        image: '',
-        skills: [
-          { name: 'JavaScript', level: 'Expert' },
-          { name: 'React', level: 'Expert' },
-          { name: 'Node.js', level: 'Intermediate' },
-        ],
-        education: [
-          { degree: 'B.Sc Computer Science', institution: 'Tech University', period: '2014-2018' },
-        ],
-        experience: [
-          {
-            title: 'Senior Developer',
-            company: 'Tech Corp',
-            period: '2019-Present',
-            description: 'Leading development teams',
-          },
-        ],
-        social: [
-          { name: 'GitHub', link: 'https://github.com' },
-          { name: 'LinkedIn', link: 'https://linkedin.com' },
-        ],
-        resume: '',
-      };
-      return res.status(200).json({ success: true, bio: defaultBio });
+    // For public access (no auth required)
+    if (!req.user?.id) {
+      return res.status(200).json({
+        success: true,
+        bio: null,
+        message: 'No user authenticated, returning empty bio'
+      });
     }
 
-    const userId = req.user.id;
-    const bio = await getBioByUserId(userId);
+    const bio = await getBioFromModel(req.user.id);
+    if (!bio) {
+      return res.status(200).json({
+        success: true,
+        bio: null,
+        message: 'No bio found for this user'
+      });
+    }
 
-    // Ensure consistent response format
-    const responseData = {
-      name: bio?.name || '',
-      title: bio?.title || '',
-      bio: bio?.bio || '',
-      email: bio?.email || '',
-      phone: bio?.phone || '',
-      image: bio?.image || '',
-      skills: Array.isArray(bio?.skills) ? bio.skills : [],
-      education: Array.isArray(bio?.education) ? bio.education : [],
-      experience: Array.isArray(bio?.experience) ? bio.experience : [],
-      social: Array.isArray(bio?.social) ? bio.social : [],
-      resume: bio?.resume || '',
-    };
-
-    res.status(200).json({ success: true, bio: responseData });
+    res.status(200).json({
+      success: true,
+      bio
+    });
   } catch (error) {
     console.error('Error fetching bio:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    next(error);
   }
 };
 
-export const updateUserBio = async (req, res) => {
+export const updateUserBio = async (req, res, next) => {
   try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
     }
-    const userId = req.user.id;
-    const bioData = req.body;
-    console.log('Updating bio for userId:', userId, 'Data:', bioData); // Debug log
+
+    const { name, title, bio, email, phone, image, skills, education, experience, social, resume } = req.body;
 
     // Validate required fields
-    if (!bioData.name || !bioData.title || !bioData.bio || !bioData.email) {
-      return res.status(400).json({ success: false, message: 'Required fields missing' });
+    if (!name || !title || !bio || !email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, title, bio and email are required'
+      });
     }
 
-    const updatedBio = await updateBio(userId, bioData);
-    res.status(200).json({ success: true, bio: updatedBio });
+    const updatedBio = await updateBio(req.user.id, {
+      name,
+      title,
+      bio,
+      email,
+      phone: phone || '',
+      image: image || '',
+      skills: skills || [],
+      education: education || [],
+      experience: experience || [],
+      social: social || [],
+      resume: resume || ''
+    });
+
+    res.status(200).json({
+      success: true,
+      bio: updatedBio
+    });
   } catch (error) {
     console.error('Error updating bio:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    next(error);
   }
 };
 
-export const createUserBio = async (req, res) => {
+export const createUserBio = async (req, res, next) => {
   try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
     }
-    const userId = req.user.id;
-    const bioData = req.body;
-    console.log('Creating bio for userId:', userId, 'Data:', bioData); // Debug log
-    if (!bioData.name || !bioData.title || !bioData.bio || !bioData.email) {
-      return res.status(400).json({ success: false, message: 'Required fields missing' });
+
+    const { name, title, bio, email } = req.body;
+
+    // Check if bio already exists
+    const existingBio = await getBioFromModel(req.user.id);
+    if (existingBio) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bio already exists for this user'
+      });
     }
-    const newBio = await createBio(userId, bioData);
-    res.status(201).json({ success: true, bio: newBio });
+
+    // Create new bio with minimal required fields
+    const newBio = await createBio(req.user.id, {
+      name,
+      title,
+      bio,
+      email,
+      phone: '',
+      image: '',
+      skills: [],
+      education: [],
+      experience: [],
+      social: [],
+      resume: ''
+    });
+
+    res.status(201).json({
+      success: true,
+      bio: newBio
+    });
   } catch (error) {
     console.error('Error creating bio:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    next(error);
+  }
+};
+
+// Add this new function to your existing controller
+export const getBioByUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID'
+      });
+    }
+
+    const bio = await getBioFromModel(userId);
+    
+    if (!bio) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bio not found for this user'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      bio
+    });
+  } catch (error) {
+    console.error('Error fetching bio by user ID:', error);
+    next(error);
   }
 };

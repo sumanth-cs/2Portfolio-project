@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { getBio, getProjects, getTheme } from '../api/api';
-import { useAuth } from './AuthContext.jsx';
+import { createContext, useContext, useEffect, useState } from "react";
+import { getBio, getProjects, getTheme } from "../api/api";
+import { useAuth } from "./AuthContext";
 
 export const PortfolioContext = createContext();
 
@@ -14,31 +14,27 @@ export const PortfolioProvider = ({ children }) => {
     error: null,
   });
 
-  const fetchData = async () => {
-    if (authLoading) return; // Wait for auth to resolve
-
+  const fetchData = async (userId = null) => {
     try {
-      setPortfolioData((prev) => ({ ...prev, loading: true }));
+      setPortfolioData((prev) => ({ ...prev, loading: true, error: null }));
+
+      const targetUserId = userId || user?.id;
 
       const [bioResponse, projectsResponse, themeResponse] = await Promise.all([
-        getBio(),
-        getProjects(),
-        getTheme(),
+        getBio(targetUserId),
+        getProjects(targetUserId),
+        getTheme(targetUserId),
       ]);
 
-      console.log('Fetched bio:', bioResponse); // Debug log
-      console.log('Fetched projects:', projectsResponse); // Debug log
-      console.log('Fetched theme:', themeResponse); // Debug log
-
       setPortfolioData({
-        bio: bioResponse || null,
+        bio: bioResponse,
         projects: projectsResponse || [],
         theme: themeResponse || null,
         loading: false,
         error: null,
       });
     } catch (error) {
-      console.error('Error fetching portfolio data:', error);
+      console.error("Error fetching portfolio data:", error);
       setPortfolioData({
         bio: null,
         projects: [],
@@ -50,8 +46,10 @@ export const PortfolioProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [user, authLoading]); // Refetch when user or authLoading changes
+    if (!authLoading) {
+      fetchData();
+    }
+  }, [user, authLoading]);
 
   const updatePortfolio = async (updates) => {
     try {
@@ -59,12 +57,12 @@ export const PortfolioProvider = ({ children }) => {
         ...prev,
         ...updates,
         loading: true,
+        error: null,
       }));
 
-      // Refetch data to ensure consistency with backend
-      await fetchData();
+      await fetchData(); // Refetch to ensure consistency
     } catch (error) {
-      console.error('Error updating portfolio:', error);
+      console.error("Error updating portfolio:", error);
       setPortfolioData((prev) => ({
         ...prev,
         error: error.message,
@@ -73,8 +71,13 @@ export const PortfolioProvider = ({ children }) => {
     }
   };
 
-  const refetch = async () => {
-    await fetchData();
+  const getPortfolioByUserId = async (userId) => {
+    try {
+      await fetchData(userId);
+    } catch (error) {
+      console.error("Error fetching portfolio by user ID:", error);
+      throw error;
+    }
   };
 
   return (
@@ -82,7 +85,8 @@ export const PortfolioProvider = ({ children }) => {
       value={{
         portfolioData,
         updatePortfolio,
-        refetch,
+        refetch: fetchData,
+        getPortfolioByUserId,
       }}
     >
       {children}

@@ -1,6 +1,3 @@
-/**
- * Bio model for MongoDB.
- */
 import mongoose from 'mongoose';
 
 const bioSchema = new mongoose.Schema({
@@ -10,7 +7,7 @@ const bioSchema = new mongoose.Schema({
   bio: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String },
-  image: { type: String }, // Add image field
+  image: { type: String },
   skills: [{ name: String, level: { type: String, enum: ['Basic', 'Intermediate', 'Expert'] } }],
   education: [{ degree: String, institution: String, period: String }],
   experience: [{ title: String, company: String, period: String, description: String }],
@@ -26,9 +23,21 @@ export const createBio = async (userId, bioData) => {
 };
 
 export const getBioByUserId = async (userId) => {
-  return await Bio.findOne({ userId });
+  console.log('Fetching bio for userId:', userId);
+  const bio = await Bio.findOne({ userId });
+  console.log('Bio found:', bio);
+  return bio;
 };
 
 export const updateBio = async (userId, bioData) => {
-  return await Bio.findOneAndUpdate({ userId }, bioData, { new: true, upsert: true });
+  console.log('Updating bio for userId:', userId, 'with data:', bioData);
+  const updatedBio = await Bio.findOneAndUpdate(
+    { userId },
+    { $set: bioData },
+    { new: true, upsert: true, runValidators: true }
+  );
+  console.log('Updated bio:', updatedBio);
+  return updatedBio;
 };
+
+export default Bio;

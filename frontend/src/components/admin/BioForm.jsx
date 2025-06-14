@@ -1,22 +1,22 @@
-import { useForm } from 'react-hook-form';
-import { motion } from 'framer-motion';
-import { useState, useEffect, useContext } from 'react';
-import { updateBio, getBio } from '../../api/bio.js';
-import { uploadFile } from '../../lib/appwrite/storage.js';
-import { Input } from '../ui/input.jsx';
-import { Label } from '../ui/label.jsx';
-import { Textarea } from '../ui/textarea.jsx';
-import { Button } from '../ui/button.jsx';
+import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
+import { useState, useEffect, useContext } from "react";
+import { updateBio } from "../../api/bio.js";
+import { uploadFile } from "../../lib/appwrite/storage.js";
+import { Input } from "../ui/input.jsx";
+import { Label } from "../ui/label.jsx";
+import { Textarea } from "../ui/textarea.jsx";
+import { Button } from "../ui/button.jsx";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select.jsx';
-import { toast } from 'react-hot-toast';
-import { ThemeContext } from '@/contexts/ThemeContext.jsx';
-import { usePortfolio } from '@/contexts/PortfolioContext.jsx';
+} from "../ui/select.jsx";
+import { toast } from "react-hot-toast";
+import { ThemeContext } from "../../contexts/ThemeContext.jsx";
+import { usePortfolio } from "../../contexts/PortfolioContext.jsx";
 
 function BioForm({ onSave }) {
   const {
@@ -28,69 +28,47 @@ function BioForm({ onSave }) {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const [skills, setSkills] = useState([]);
-  const [newSkill, setNewSkill] = useState({ name: '', level: 'Basic' });
+  const [newSkill, setNewSkill] = useState({ name: "", level: "Basic" });
   const [education, setEducation] = useState([]);
   const [newEducation, setNewEducation] = useState({
-    degree: '',
-    institution: '',
-    period: '',
+    degree: "",
+    institution: "",
+    period: "",
   });
   const [experience, setExperience] = useState([]);
   const [newExperience, setNewExperience] = useState({
-    title: '',
-    company: '',
-    period: '',
-    description: '',
+    title: "",
+    company: "",
+    period: "",
+    description: "",
   });
   const [social, setSocial] = useState([]);
-  const [newSocial, setNewSocial] = useState({ name: '', link: '' });
+  const [newSocial, setNewSocial] = useState({ name: "", link: "" });
   const [resumeFile, setResumeFile] = useState(null);
   const { colors } = useContext(ThemeContext);
-  const { refetch } = usePortfolio();
+  const { portfolioData, refetch } = usePortfolio();
 
   useEffect(() => {
-    const fetchBio = async () => {
-      try {
-        const bio = await getBio();
-        console.log('BioForm fetched bio:', bio); // Debug log
-        const bioData = {
-          name: bio?.name || '',
-          title: bio?.title || '',
-          bio: bio?.bio || '',
-          email: bio?.email || '',
-          phone: bio?.phone || '',
-          resume: bio?.resume || '',
-        };
-        reset(bioData);
-        setSkills(Array.isArray(bio?.skills) ? bio.skills : []);
-        setEducation(Array.isArray(bio?.education) ? bio.education : []);
-        setExperience(Array.isArray(bio?.experience) ? bio.experience : []);
-        setSocial(Array.isArray(bio?.social) ? bio.social : []);
-        Object.entries(bioData).forEach(([key, value]) => setValue(key, value));
-      } catch (error) {
-        console.error('Failed to fetch bio:', error);
-        toast.error('Failed to load bio data');
-        reset({
-          name: '',
-          title: '',
-          bio: '',
-          email: '',
-          phone: '',
-          resume: '',
-        });
-        setSkills([]);
-        setEducation([]);
-        setExperience([]);
-        setSocial([]);
-      }
-    };
-    fetchBio();
-  }, [reset, setValue]);
+    if (portfolioData?.bio) {
+      reset({
+        name: portfolioData.bio.name || "",
+        title: portfolioData.bio.title || "",
+        bio: portfolioData.bio.bio || "",
+        email: portfolioData.bio.email || "",
+        phone: portfolioData.bio.phone || "",
+        resume: portfolioData.bio.resume || "",
+      });
+      setSkills(portfolioData.bio.skills || []);
+      setEducation(portfolioData.bio.education || []);
+      setExperience(portfolioData.bio.experience || []);
+      setSocial(portfolioData.bio.social || []);
+    }
+  }, [portfolioData, reset]);
 
   const handleAddSkill = () => {
     if (newSkill.name.trim()) {
       setSkills([...skills, newSkill]);
-      setNewSkill({ name: '', level: 'Basic' });
+      setNewSkill({ name: "", level: "Basic" });
     }
   };
 
@@ -105,7 +83,7 @@ function BioForm({ onSave }) {
       newEducation.period.trim()
     ) {
       setEducation([...education, newEducation]);
-      setNewEducation({ degree: '', institution: '', period: '' });
+      setNewEducation({ degree: "", institution: "", period: "" });
     }
   };
 
@@ -120,7 +98,7 @@ function BioForm({ onSave }) {
       newExperience.period.trim()
     ) {
       setExperience([...experience, newExperience]);
-      setNewExperience({ title: '', company: '', period: '', description: '' });
+      setNewExperience({ title: "", company: "", period: "", description: "" });
     }
   };
 
@@ -131,7 +109,7 @@ function BioForm({ onSave }) {
   const handleAddSocial = () => {
     if (newSocial.name.trim() && newSocial.link.trim()) {
       setSocial([...social, newSocial]);
-      setNewSocial({ name: '', link: '' });
+      setNewSocial({ name: "", link: "" });
     }
   };
 
@@ -146,6 +124,7 @@ function BioForm({ onSave }) {
       if (resumeFile) {
         resumeUrl = await uploadFile(resumeFile);
       }
+
       const bioData = {
         name: data.name,
         title: data.title,
@@ -158,25 +137,19 @@ function BioForm({ onSave }) {
         social,
         resume: resumeUrl,
       };
-      console.log('Submitting bio data:', bioData); // Debug log
+
+      console.log('Submitting bio data:', bioData);
+
       const response = await updateBio(bioData);
-      console.log('Bio update response:', response); // Debug log
-      toast.success('Bio updated successfully!');
-      onSave(response.bio || response);
-      reset({
-        name: bioData.name,
-        title: bioData.title,
-        bio: bioData.bio,
-        email: bioData.email,
-        phone: bioData.phone,
-        resume: resumeUrl,
-      });
-      setSkills(bioData.skills);
-      setEducation(bioData.education);
-      setExperience(bioData.experience);
-      setSocial(bioData.social);
-      setResumeFile(null);
-      await refetch(); // Refresh PortfolioContext data
+      console.log('Update response:', response);
+
+      if (response.success) {
+        await refetch(); // Trigger full data refresh
+        toast.success('Bio updated successfully!');
+        onSave(bioData);
+      } else {
+        throw new Error(response.message || 'Failed to update bio');
+      }
     } catch (error) {
       console.error('Failed to update bio:', error);
       toast.error(`Failed to update bio: ${error.message}`);
@@ -197,7 +170,7 @@ function BioForm({ onSave }) {
           <Label htmlFor="name">Name</Label>
           <Input
             id="name"
-            {...register('name', { required: 'Name is required' })}
+            {...register("name", { required: "Name is required" })}
           />
           {errors.name && (
             <p className="text-red-500 text-sm">{errors.name.message}</p>
@@ -207,7 +180,7 @@ function BioForm({ onSave }) {
           <Label htmlFor="title">Professional Title</Label>
           <Input
             id="title"
-            {...register('title', { required: 'Title is required' })}
+            {...register("title", { required: "Title is required" })}
           />
           {errors.title && (
             <p className="text-red-500 text-sm">{errors.title.message}</p>
@@ -217,7 +190,7 @@ function BioForm({ onSave }) {
           <Label htmlFor="bio">Bio Description</Label>
           <Textarea
             id="bio"
-            {...register('bio', { required: 'Bio is required' })}
+            {...register("bio", { required: "Bio is required" })}
           />
           {errors.bio && (
             <p className="text-red-500 text-sm">{errors.bio.message}</p>
@@ -228,11 +201,11 @@ function BioForm({ onSave }) {
           <Input
             id="email"
             type="email"
-            {...register('email', {
-              required: 'Email is required',
+            {...register("email", {
+              required: "Email is required",
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Invalid email',
+                message: "Invalid email",
               },
             })}
           />
@@ -242,7 +215,7 @@ function BioForm({ onSave }) {
         </div>
         <div>
           <Label htmlFor="phone">Phone</Label>
-          <Input id="phone" {...register('phone')} />
+          <Input id="phone" {...register("phone")} />
         </div>
         <div>
           <Label htmlFor="resume">Resume (PDF)</Label>
@@ -253,13 +226,13 @@ function BioForm({ onSave }) {
             onChange={(e) => setResumeFile(e.target.files[0])}
           />
           <p className="text-sm text-gray-500 mt-1">
-            Current resume: {resumeFile ? resumeFile.name : 'None'}
+            Current resume: {resumeFile ? resumeFile.name : portfolioData?.bio?.resume || "None"}
           </p>
         </div>
         <div>
           <Label>Skills</Label>
           <div className="space-y-2">
-            {skills.map((skill, index) => (
+            {(skills || []).map((skill, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
                   value={skill.name}
@@ -333,7 +306,7 @@ function BioForm({ onSave }) {
         <div>
           <Label>Education</Label>
           <div className="space-y-2">
-            {education.map((edu, index) => (
+            {(education || []).map((edu, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
                   value={edu.degree}
@@ -410,7 +383,7 @@ function BioForm({ onSave }) {
         <div>
           <Label>Experience</Label>
           <div className="space-y-2">
-            {experience.map((exp, index) => (
+            {(experience || []).map((exp, index) => (
               <div key={index} className="space-y-2 border p-2 rounded">
                 <Input
                   value={exp.title}
@@ -479,8 +452,7 @@ function BioForm({ onSave }) {
                 onChange={(e) =>
                   setNewExperience({ ...newExperience, period: e.target.value })
                 }
-                placeholder="Period"
-              />
+                placeholder="Period" />
               <Textarea
                 value={newExperience.description}
                 onChange={(e) =>
@@ -506,7 +478,7 @@ function BioForm({ onSave }) {
         <div>
           <Label>Social Links</Label>
           <div className="space-y-2">
-            {social.map((soc, index) => (
+            {(social || []).map((soc, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
                   value={soc.name}
@@ -569,7 +541,7 @@ function BioForm({ onSave }) {
             color: colors.buttonText,
           }}
         >
-          {loading ? 'Saving...' : 'Save Bio'}
+          {loading ? "Saving..." : "Save Bio"}
         </Button>
       </form>
     </motion.section>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { usePortfolio } from "../../contexts/PortfolioContext";
 import { Link } from "react-router-dom";
 import BioForm from "./BioForm";
 import PhotoUpload from "./PhotoUpload";
@@ -11,7 +12,8 @@ import { toast } from "react-hot-toast";
 import { Home, Image, Palette, Briefcase, LogOut } from "lucide-react";
 
 function AdminDashboard() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, signout } = useContext(AuthContext); // Updated to use signout
+  const { refetch } = usePortfolio();
   const [activeTab, setActiveTab] = useState("bio");
   const tabs = [
     { id: "bio", label: "Bio", icon: <Briefcase className="w-4 h-4 mr-2" /> },
@@ -28,14 +30,19 @@ function AdminDashboard() {
     },
   ];
 
-  const handleSave = (data) => {
-    console.log("Saved:", data);
-    toast.success("Changes saved successfully");
+  const handleSave = async (data) => {
+    try {
+      await refetch(); // Refresh data after save
+      console.log("Saved:", data);
+      toast.success("Changes saved successfully");
+    } catch (error) {
+      toast.error("Failed to save changes");
+    }
   };
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signout();
       toast.success("Logged out successfully");
     } catch (error) {
       toast.error("Logout failed");

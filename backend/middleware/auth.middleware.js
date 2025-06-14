@@ -1,37 +1,3 @@
-// /**
-//  * JWT authentication middleware.
-//  */
-// import jwt from 'jsonwebtoken';
-// import { config } from '../config/env.js';
-
-// export const authenticate = async (req, res, next) => {
-//   try {
-//     const authHeader = req.header('Authorization');
-//     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-//       throw new Error('Authentication required: No token provided.');
-//     }
-//     const token = authHeader.replace('Bearer ', '');
-//     if (!token) {
-//       throw new Error('Authentication required: Invalid token format.');
-//     }
-//     const decoded = jwt.verify(token, config.jwtSecret);
-//     if (!decoded.id) {
-//       throw new Error('Authentication required: Invalid token payload.');
-//     }
-//     req.user = { id: decoded.id, isAdmin: decoded.isAdmin || false };
-//     next();
-//   } catch (error) {
-//     console.error('Authentication error:', error.message);
-//     if (error.name === 'TokenExpiredError') {
-//       return res.status(401).json({ success: false, message: 'jwt expired' });
-//     }
-//     res.status(401).json({ success: false, message: error.message });
-//   }
-// };
-
-/**
- * Authentication middleware.
- */
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 
@@ -39,18 +5,38 @@ export const authenticate = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
     if (!token) {
-      return res.status(401).json({ success: false, message: 'Authentication required' });
+      console.log('No token provided in request');
+      return res.status(401).json({ success: false, message: 'Authentication required: No token provided' });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        console.log('Token expired');
+        return res.status(401).json({ success: false, message: 'jwt expired' });
+      }
+      console.log('Invalid token:', error.message);
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+
+    if (!decoded.id) {
+      console.log('Invalid token payload: no id');
+      return res.status(401).json({ success: false, message: 'Invalid token payload' });
+    }
+
     const user = await User.findById(decoded.id).select('-password');
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid or missing token' });
+      console.log('User not found for id:', decoded.id);
+      return res.status(401).json({ success: false, message: 'User not found' });
     }
-    req.user = user;
-    req.userId = user._id.toString(); // Explicitly set userId
+
+    req.user = { id: user._id.toString(), isAdmin: user.isAdmin || false };
+    req.userId = user._id.toString();
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
-    res.status(401).json({ success: false, message: 'Invalid or missing token' });
+    console.error('Auth middleware error:', error.message);
+    res.status(401).json({ success: false, message: 'Authentication failed' });
   }
 };
