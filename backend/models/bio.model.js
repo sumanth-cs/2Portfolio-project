@@ -32,11 +32,17 @@ export const getBioByUserId = async (userId) => {
 
 export const updateBio = async (userId, bioData) => {
   console.log('Updating bio for userId:', userId, 'with data:', bioData);
+  
+  const updateData = Object.fromEntries(
+    Object.entries(bioData).filter(([_, v]) => v !== null && v !== undefined)
+  );
+
   const updatedBio = await Bio.findOneAndUpdate(
     { userId },
-    { $set: bioData },
+    { $set: updateData },
     { new: true, upsert: true, runValidators: true }
   );
+  
   console.log('Updated bio:', updatedBio);
   return updatedBio;
 };

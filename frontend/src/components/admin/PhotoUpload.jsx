@@ -43,22 +43,38 @@ function PhotoUpload({ onSave }) {
         if (!aboutUrl) throw new Error("Failed to upload about photo");
       }
 
+      // Get current bio data first
       const currentBio = await getBio();
-      if (!currentBio.name || !currentBio.title || !currentBio.bio || !currentBio.email) {
-        throw new Error("Bio is missing required fields. Please update your bio first.");
+
+      // Create update payload with only the changed fields
+      const updatePayload = {};
+
+      if (profileUrl) {
+        updatePayload.image = profileUrl;
       }
 
-      const updatedBio = {
-        ...currentBio,
-        image: profileUrl || currentBio.image,
-        aboutImage: aboutUrl || currentBio.aboutImage
-      };
+      if (aboutUrl) {
+        updatePayload.aboutImage = aboutUrl;
+      }
 
-      const response = await updateBio(updatedBio);
-      toast.success("Photos uploaded successfully!");
-      setProfileFile(null);
-      setAboutFile(null);
-      onSave({ image: profileUrl, aboutImage: aboutUrl });
+      // Only update if we have changes
+      if (Object.keys(updatePayload).length > 0) {
+        const response = await updateBio({
+          ...currentBio,
+          ...updatePayload,
+        });
+
+        if (response.success) {
+          toast.success("Photos uploaded successfully!");
+          setProfileFile(null);
+          setAboutFile(null);
+          onSave(response.bio);
+        } else {
+          throw new Error(response.message || "Failed to update bio");
+        }
+      } else {
+        toast.info("No changes to save");
+      }
     } catch (error) {
       console.error("Upload error:", error);
       toast.error(`Failed to upload photos: ${error.message}`);
@@ -88,12 +104,19 @@ function PhotoUpload({ onSave }) {
             <Label
               htmlFor="profilePhoto"
               className="inline-block bg-blue-600 text-white py-2 px-4 m-2 rounded cursor-pointer"
-              style={{ backgroundColor: colors.primary, color: colors.buttonText }}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.buttonText,
+              }}
             >
               Choose Profile Photo
             </Label>
           </div>
-          {profileFile && <p className="text-sm text-gray-600 mt-2">Selected: {profileFile.name}</p>}
+          {profileFile && (
+            <p className="text-sm text-gray-600 mt-2">
+              Selected: {profileFile.name}
+            </p>
+          )}
         </div>
 
         <div>
@@ -109,12 +132,19 @@ function PhotoUpload({ onSave }) {
             <Label
               htmlFor="aboutPhoto"
               className="inline-block bg-blue-600 text-white py-2 px-4 m-2 rounded cursor-pointer"
-              style={{ backgroundColor: colors.primary, color: colors.buttonText }}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.buttonText,
+              }}
             >
               Choose About Photo
             </Label>
           </div>
-          {aboutFile && <p className="text-sm text-gray-600 mt-2">Selected: {aboutFile.name}</p>}
+          {aboutFile && (
+            <p className="text-sm text-gray-600 mt-2">
+              Selected: {aboutFile.name}
+            </p>
+          )}
         </div>
 
         <Button

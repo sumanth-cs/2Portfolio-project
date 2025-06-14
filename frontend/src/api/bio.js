@@ -3,7 +3,8 @@ import { apiFetch } from './api';
 export const updateBio = async (bioData) => {
   const response = await apiFetch('/api/bio', {
     method: 'PUT',
-    body: JSON.stringify(bioData)},
+    body: JSON.stringify(bioData)
+  },
   );
   console.log('updateBio API response:', response);
   // Debug log
@@ -35,6 +36,7 @@ export const getBio = async () => {
       email: bioData.email || '',
       phone: bioData.phone || '',
       image: bioData.image || '',
+      aboutImage: bioData.aboutImage || '',
       skills: Array.isArray(bioData.skills) ? bioData.skills : [],
       education: Array.isArray(bioData.education) ? bioData.education : [],
       experience: Array.isArray(bioData.experience) ? bioData.experience : [],

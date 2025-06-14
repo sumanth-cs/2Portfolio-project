@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.routes.js';
 import bioRoutes from './routes/bio.routes.js';
 import projectRoutes from './routes/project.routes.js';
 import themeRoutes from './routes/theme.routes.js';
+import contactRoutes from './routes/contact.routes.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -49,6 +50,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/bio', bioRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/theme', themeRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Serve React build
 const frontendDist = path.join(__dirname, "../frontend/dist");

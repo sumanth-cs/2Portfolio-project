@@ -100,6 +100,7 @@ export const getBio = async (userId = null) => {
       email: response.bio.email || '',
       phone: response.bio.phone || '',
       image: response.bio.image || '',
+      aboutImage: response.bio.aboutImage || '',
       skills: Array.isArray(response.bio.skills) ? response.bio.skills : [],
       education: Array.isArray(response.bio.education) ? response.bio.education : [],
       experience: Array.isArray(response.bio.experience) ? response.bio.experience : [],

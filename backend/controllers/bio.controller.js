@@ -23,7 +23,10 @@ export const getBio = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      bio
+      bio: {
+        ...bio._doc,
+        aboutImage: bio.aboutImage || null
+      }
     });
   } catch (error) {
     console.error('Error fetching bio:', error);
@@ -40,7 +43,11 @@ export const updateUserBio = async (req, res, next) => {
       });
     }
 
-    const { name, title, bio, email, phone, image, skills, education, experience, social, resume } = req.body;
+    const { 
+      name, title, bio, email, phone, 
+      image, aboutImage, // Add aboutImage here
+      skills, education, experience, social, resume 
+    } = req.body;
 
     // Validate required fields
     if (!name || !title || !bio || !email) {
@@ -55,13 +62,14 @@ export const updateUserBio = async (req, res, next) => {
       title,
       bio,
       email,
-      phone: phone || '',
-      image: image || '',
+      phone: phone || null,
+      image: image || null,
+      aboutImage: aboutImage || null, // Add this line
       skills: skills || [],
       education: education || [],
       experience: experience || [],
       social: social || [],
-      resume: resume || ''
+      resume: resume || null
     });
 
     res.status(200).json({
