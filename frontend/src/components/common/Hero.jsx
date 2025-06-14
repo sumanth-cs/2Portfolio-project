@@ -170,7 +170,7 @@ function Hero({ bio = {} }) {
               asChild
               className="flex items-center gap-2"
             >
-              <a href="#contact" onClick={(e) => handleScroll(e, item.path)}>
+              <a href="#contact" onClick={(e) => handleScroll(e, "#contact")}>
                 <Mail className="w-5 h-5" />
                 Contact Me
               </a>

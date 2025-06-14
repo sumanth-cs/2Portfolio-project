@@ -163,7 +163,7 @@ function BioForm({ onSave }) {
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6 bg-gray-100 dark:bg-white p-6 rounded-lg shadow-lg"
+      className="space-y-6 bg-gray-100 dark:bg-white p-3 md:p-6 rounded-lg shadow-lg"
     >
       <h3 className="text-2xl font-bold">Bio Settings</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>

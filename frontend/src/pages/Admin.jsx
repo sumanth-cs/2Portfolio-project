@@ -55,15 +55,15 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-2 py-6">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <LayoutDashboard className="h-6 w-6" style={{ color: colors.primary }} />
-            <h1 className="text-3xl font-bold" style={{ color: colors.text }}>
+            <h1 className="text-xl md:text-3xl font-bold" style={{ color: colors.text }}>
               Dashboard
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               onClick={handleRefresh}

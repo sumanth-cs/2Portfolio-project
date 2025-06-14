@@ -107,7 +107,7 @@ function PhotoUpload({ onSave }) {
           </div>
         </div>
         {files.length > 0 && (
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 mt-2 max-w-xs truncate overflow-hidden whitespace-nowrap">
             Selected: {files[0].name}
           </p>
         )}
@@ -119,7 +119,6 @@ function PhotoUpload({ onSave }) {
             color: colors.buttonText,
           }}
         >
-
           {loading ? "Uploading..." : "Upload Photo"}
         </Button>
       </form>

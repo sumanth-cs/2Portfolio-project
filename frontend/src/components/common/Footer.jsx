@@ -1,10 +1,10 @@
-import { motion } from 'framer-motion';
-import { Github, Linkedin, Twitter } from 'lucide-react';
-import { useContext } from 'react';
-import { AuthContext } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import { Button } from '../ui/button';
-import { ThemeContext } from '@/contexts/ThemeContext';
+import { motion } from "framer-motion";
+import { Github, Linkedin, Twitter } from "lucide-react";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
+import { ThemeContext } from "@/contexts/ThemeContext";
 
 function Footer() {
   const { user } = useContext(AuthContext);
@@ -31,26 +31,47 @@ function Footer() {
             className="flex items-center gap-4"
           >
             <div className="flex space-x-4">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Github className="w-6 h-6 hover:opacity-80 transition-opacity" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Linkedin className="w-6 h-6 hover:opacity-80 transition-opacity" />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Twitter className="w-6 h-6 hover:opacity-80 transition-opacity" />
               </a>
             </div>
 
             {user ? (
-              <Button asChild style={{ 
-                backgroundColor: colors.primary,
-                color: colors.buttonText
-              }}>
+              <Button
+                asChild
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
+              >
                 <Link to="/dashboard">Edit Portfolio</Link>
               </Button>
             ) : (
-              <Button asChild>
+              <Button
+                asChild
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
+              >
                 <Link to="/signup">Create Your Portfolio</Link>
               </Button>
             )}
