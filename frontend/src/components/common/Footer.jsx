@@ -2,13 +2,33 @@ import { motion } from "framer-motion";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { PortfolioContext } from "../../contexts/PortfolioContext";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ThemeContext } from "@/contexts/ThemeContext";
 
 function Footer() {
   const { user } = useContext(AuthContext);
+  const { portfolioData } = useContext(PortfolioContext);
   const { colors } = useContext(ThemeContext);
+
+  const safeBio = portfolioData.bio || {};
+  const social = Array.isArray(safeBio.social) ? safeBio.social : [];
+
+  const socialLinks = [
+    {
+      icon: <Github className="w-6 h-6" />,
+      url: social.find((s) => s?.name?.toLowerCase() === "github")?.link || "https://github.com",
+    },
+    {
+      icon: <Linkedin className="w-6 h-6" />,
+      url: social.find((s) => s?.name?.toLowerCase() === "linkedin")?.link || "https://linkedin.com",
+    },
+    {
+      icon: <Twitter className="w-6 h-6" />,
+      url: social.find((s) => s?.name?.toLowerCase() === "twitter")?.link || "https://twitter.com",
+    },
+  ];
 
   return (
     <footer className="py-12 px-4 border-t border-gray-200">
@@ -31,46 +51,30 @@ function Footer() {
             className="flex items-center gap-4"
           >
             <div className="flex space-x-4">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Github className="w-6 h-6 hover:opacity-80 transition-opacity" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Linkedin className="w-6 h-6 hover:opacity-80 transition-opacity" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Twitter className="w-6 h-6 hover:opacity-80 transition-opacity" />
-              </a>
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
 
             {user ? (
               <Button
                 asChild
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
+                style={{ backgroundColor: colors.primary, color: colors.buttonText }}
               >
                 <Link to="/dashboard">Edit Portfolio</Link>
               </Button>
             ) : (
               <Button
                 asChild
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
+                style={{ backgroundColor: colors.primary, color: colors.buttonText }}
               >
                 <Link to="/signup">Create Your Portfolio</Link>
               </Button>

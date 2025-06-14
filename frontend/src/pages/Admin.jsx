@@ -11,6 +11,7 @@ import { toast } from 'react-hot-toast';
 import { LayoutDashboard, User, Image, Palette, Briefcase, RefreshCw } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import FloatingBubbles from '@/components/common/FloatingBubbles';
 
 const Admin = () => {
   const { user } = useAuth();
@@ -54,7 +55,8 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: colors.background }}>
+      <FloatingBubbles />
       <div className="container mx-auto px-2 py-6">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-2">
@@ -75,14 +77,9 @@ const Admin = () => {
             </Button>
             <Button
               asChild
-              style={{
-                backgroundColor: colors.primary,
-                color: colors.buttonText,
-              }}
+              style={{ backgroundColor: colors.primary, color: colors.buttonText }}
             >
-              <Link to="/">
-                Back to Home
-              </Link>
+              <Link to="/">Back to Home</Link>
             </Button>
           </div>
         </div>
@@ -131,7 +128,7 @@ const Admin = () => {
 
             <TabsContent value="photos">
               <PhotoUpload 
-                onSave={(imageUrl) => handleSave({ bio: { ...portfolioData.bio, image: imageUrl } })} 
+                onSave={(images) => handleSave({ bio: { ...portfolioData.bio, ...images } })} 
               />
             </TabsContent>
 

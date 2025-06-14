@@ -160,7 +160,7 @@ export const getTheme = async (userId = null) => {
     return response.theme || {
       text: '#000000',
       background: '#ffffff',
-      primary: '#3b82f6',
+      primary: '#0B1D51',
       secondary: '#6b7280',
       accent: '#10b981',
       buttonText: '#ffffff'
@@ -170,7 +170,7 @@ export const getTheme = async (userId = null) => {
     return {
       text: '#000000',
       background: '#ffffff',
-      primary: '#3b82f6',
+      primary: '#0B1D51',
       secondary: '#6b7280',
       accent: '#10b981',
       buttonText: '#ffffff'
@@ -238,7 +238,7 @@ export const DEFAULT_PROJECTS = [
 export const DEFAULT_THEME = {
   text: '#000000',
   background: '#ffffff',
-  primary: '#3b82f6',
+  primary: '#0B1D51',
   secondary: '#6b7280',
   accent: '#10b981',
   buttonText: '#ffffff'

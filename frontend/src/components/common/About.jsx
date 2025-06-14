@@ -6,12 +6,11 @@ import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 function About({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
-  // Provide default values for all required properties
   const safeBio = {
     name: 'Your Name',
     title: 'Your Title',
     bio: 'A brief description about yourself.',
-    image: defaultProfilePic,
+    aboutImage: bio.aboutImage || defaultProfilePic,
     ...bio
   };
 
@@ -30,16 +29,16 @@ function About({ bio = {} }) {
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="w-48 h-48 rounded-full overflow-hidden shadow-lg"
+              className="w-[300px] h-[300px] overflow-hidden rounded-3xl shadow-lg" 
             >
               <img
-                src={safeBio.image || defaultProfilePic}
+                src={safeBio.aboutImage}
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => (e.target.src = defaultProfilePic)}
               />
             </motion.div>
-            <div className="flex-1">
+            <div className="flex-1 w-[300px] h-[300px] flex items-center">
               <p className="text-lg leading-relaxed" style={{ color: colors.text }}>
                 {safeBio.bio}
               </p>

@@ -8,6 +8,7 @@ const bioSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String },
   image: { type: String },
+  aboutImage: { type: String },
   skills: [{ name: String, level: { type: String, enum: ['Basic', 'Intermediate', 'Expert'] } }],
   education: [{ degree: String, institution: String, period: String }],
   experience: [{ title: String, company: String, period: String, description: String }],

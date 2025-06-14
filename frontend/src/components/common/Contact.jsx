@@ -2,21 +2,51 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ThemeContext } from "@/contexts/ThemeContext";
+import { PortfolioContext, usePortfolio } from "@/contexts/PortfolioContext";
+import emailjs from '@emailjs/browser';
+import { toast } from "react-hot-toast";
 
 function Contact() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm();
   const { colors } = useContext(ThemeContext);
+  const { portfolioData } = useContext(PortfolioContext);
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = (data) => {
-    console.log("Form submitted:", data);
-    // Add your form submission logic here
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      const templateParams = {
+        from_name: data.name,
+        from_email: data.email,
+        message: data.message,
+        to_email: portfolioData.bio?.email || 'contact@example.com'
+      };
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      toast.success("Message sent successfully!");
+      reset();
+    } catch (error) {
+      console.error("Email send error:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const safeBio = portfolioData.bio || {};
 
   return (
     <section id="contact" className="py-20 px-4">
@@ -45,7 +75,7 @@ function Contact() {
               </div>
               <div>
                 <h3 className="font-medium mb-1">Email</h3>
-                <p className="opacity-80">contact@example.com</p>
+                <p className="opacity-80">{safeBio.email || 'contact@example.com'}</p>
               </div>
             </div>
 
@@ -55,7 +85,7 @@ function Contact() {
               </div>
               <div>
                 <h3 className="font-medium mb-1">Phone</h3>
-                <p className="opacity-80">+1 (555) 123-4567</p>
+                <p className="opacity-80">{safeBio.phone || '+1 (555) 123-4567'}</p>
               </div>
             </div>
 
@@ -65,7 +95,7 @@ function Contact() {
               </div>
               <div>
                 <h3 className="font-medium mb-1">Location</h3>
-                <p className="opacity-80">San Francisco, CA</p>
+                <p className="opacity-80">{safeBio.location || 'San Francisco, CA'}</p>
               </div>
             </div>
           </motion.div>
@@ -85,9 +115,7 @@ function Contact() {
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.name.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
                 )}
               </div>
 
@@ -105,9 +133,7 @@ function Contact() {
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
                 )}
               </div>
 
@@ -119,21 +145,17 @@ function Contact() {
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
                 ></textarea>
                 {errors.message && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.message.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.message?.message}</p>
                 )}
               </div>
 
               <Button
                 type="submit"
-                className="w-full"
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
+                className="w-full text-white"
+                disabled={loading}
+                style={{ backgroundColor: colors.primary, color: colors.buttonText }}
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </Button>
             </form>
           </motion.div>

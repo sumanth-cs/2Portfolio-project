@@ -9,68 +9,59 @@ import { toast } from "react-hot-toast";
 import { ThemeContext } from "@/contexts/ThemeContext.jsx";
 
 function PhotoUpload({ onSave }) {
-  const [files, setFiles] = useState([]);
+  const [profileFile, setProfileFile] = useState(null);
+  const [aboutFile, setAboutFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const { colors } = useContext(ThemeContext);
 
-  const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files));
+  const handleProfileChange = (e) => {
+    setProfileFile(e.target.files[0]);
+  };
+
+  const handleAboutChange = (e) => {
+    setAboutFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (files.length === 0) {
+      if (!profileFile && !aboutFile) {
         throw new Error("No files selected");
       }
-      const file = files[0];
-      // Upload to Appwrite
-      const fileUrl = await uploadFile(file);
-      if (!fileUrl) {
-        throw new Error("Failed to get file URL from Appwrite");
+
+      let profileUrl = null;
+      let aboutUrl = null;
+
+      if (profileFile) {
+        profileUrl = await uploadFile(profileFile);
+        if (!profileUrl) throw new Error("Failed to upload profile photo");
       }
-      console.log("Appwrite file URL:", fileUrl); // Debug log
-      // Fetch current bio
+
+      if (aboutFile) {
+        aboutUrl = await uploadFile(aboutFile);
+        if (!aboutUrl) throw new Error("Failed to upload about photo");
+      }
+
       const currentBio = await getBio();
-      console.log("Current bio:", currentBio); // Debug log
-      // Ensure required fields
-      if (
-        !currentBio.name ||
-        !currentBio.title ||
-        !currentBio.bio ||
-        !currentBio.email
-      ) {
-        throw new Error(
-          "Bio is missing required fields. Please update your bio in the Bio Settings form."
-        );
+      if (!currentBio.name || !currentBio.title || !currentBio.bio || !currentBio.email) {
+        throw new Error("Bio is missing required fields. Please update your bio first.");
       }
-      // Update bio with image URL
+
       const updatedBio = {
-        name: currentBio.name,
-        title: currentBio.title,
-        bio: currentBio.bio,
-        email: currentBio.email,
-        phone: currentBio.phone || "",
-        image: fileUrl,
-        skills: Array.isArray(currentBio.skills) ? currentBio.skills : [],
-        education: Array.isArray(currentBio.education)
-          ? currentBio.education
-          : [],
-        experience: Array.isArray(currentBio.experience)
-          ? currentBio.experience
-          : [],
-        social: Array.isArray(currentBio.social) ? currentBio.social : [],
-        resume: currentBio.resume || "",
+        ...currentBio,
+        image: profileUrl || currentBio.image,
+        aboutImage: aboutUrl || currentBio.aboutImage
       };
-      console.log("Sending updated bio:", updatedBio); // Debug log
+
       const response = await updateBio(updatedBio);
-      toast.success("Profile photo uploaded successfully!");
-      setFiles([]);
-      onSave([fileUrl]);
+      toast.success("Photos uploaded successfully!");
+      setProfileFile(null);
+      setAboutFile(null);
+      onSave({ image: profileUrl, aboutImage: aboutUrl });
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error(`Failed to upload photo: ${error.message}`);
+      toast.error(`Failed to upload photos: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -82,44 +73,56 @@ function PhotoUpload({ onSave }) {
       animate={{ opacity: 1 }}
       className="space-y-6 bg-white p-6 rounded-lg shadow-lg"
     >
-      <h3 className="text-2xl font-bold">Upload Profile Photo</h3>
+      <h3 className="text-2xl font-bold">Upload Photos</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="photos">Select Profile Photo</Label>
+          <Label htmlFor="profilePhoto">Profile Photo</Label>
           <div className="relative w-fit border border-gray-300 rounded-lg">
             <input
-              id="photos"
+              id="profilePhoto"
               type="file"
               accept="image/*"
-              onChange={handleFileChange}
-              className="absolute inset-0 opacity-0 cursor-pointer  z-50"
+              onChange={handleProfileChange}
+              className="absolute inset-0 opacity-0 cursor-pointer z-50"
             />
             <Label
-              htmlFor="photos"
-              className="inline-block bg-blue-600 text-white py-2 px-4 m-2 rounded cursor-pointer "
-              style={{
-                backgroundColor: colors.primary,
-                color: colors.buttonText,
-              }}
+              htmlFor="profilePhoto"
+              className="inline-block bg-blue-600 text-white py-2 px-4 m-2 rounded cursor-pointer"
+              style={{ backgroundColor: colors.primary, color: colors.buttonText }}
             >
               Choose Profile Photo
             </Label>
           </div>
+          {profileFile && <p className="text-sm text-gray-600 mt-2">Selected: {profileFile.name}</p>}
         </div>
-        {files.length > 0 && (
-          <p className="text-sm text-gray-600 mt-2 max-w-xs truncate overflow-hidden whitespace-nowrap">
-            Selected: {files[0].name}
-          </p>
-        )}
+
+        <div>
+          <Label htmlFor="aboutPhoto">About Section Photo</Label>
+          <div className="relative w-fit border border-gray-300 rounded-lg">
+            <input
+              id="aboutPhoto"
+              type="file"
+              accept="image/*"
+              onChange={handleAboutChange}
+              className="absolute inset-0 opacity-0 cursor-pointer z-50"
+            />
+            <Label
+              htmlFor="aboutPhoto"
+              className="inline-block bg-blue-600 text-white py-2 px-4 m-2 rounded cursor-pointer"
+              style={{ backgroundColor: colors.primary, color: colors.buttonText }}
+            >
+              Choose About Photo
+            </Label>
+          </div>
+          {aboutFile && <p className="text-sm text-gray-600 mt-2">Selected: {aboutFile.name}</p>}
+        </div>
+
         <Button
           type="submit"
-          disabled={loading || files.length === 0}
-          style={{
-            backgroundColor: colors.primary,
-            color: colors.buttonText,
-          }}
+          disabled={loading || (!profileFile && !aboutFile)}
+          style={{ backgroundColor: colors.primary, color: colors.buttonText }}
         >
-          {loading ? "Uploading..." : "Upload Photo"}
+          {loading ? "Uploading..." : "Upload Photos"}
         </Button>
       </form>
     </motion.section>

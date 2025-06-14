@@ -1,18 +1,17 @@
-// frontend/src/components/common/Hero.jsx
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Download, FileText } from "lucide-react";
-import { Button } from "../ui/button";
+import { Github, Linkedin, Twitter, Mail, Download, FileText, Share2 } from "lucide-react";
+import { Button } from "../ui/button.jsx";
 import { useContext } from "react";
-import { ThemeContext } from "../../contexts/ThemeContext";
+import { ThemeContext } from "../../contexts/ThemeContext.jsx";
 import { toast } from "react-hot-toast";
 import defaultProfilePic from "../../assets/defaultProfilePic.jpg";
 
 function Hero({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
-  const name = bio.name || "John Doe";
-  const title = bio.title || "Full Stack Developer";
-  const email = bio.email || "john.doe@example.com";
+  const name = bio.name || "Your Name";
+  const title = bio.title || "Your Title";
+  const email = bio.email || "contact@example.com";
   const image = bio.image || defaultProfilePic;
   const social = Array.isArray(bio.social) ? bio.social : [];
   const resume = bio.resume || "";
@@ -21,29 +20,53 @@ function Hero({ bio = {} }) {
     {
       icon: <Github className="w-5 h-5" />,
       url:
-        social.find((s) => s?.name?.toLowerCase() === "github")?.link ||
-        "https://github.com",
-      name: "GitHub",
-    },
-    {
-      icon: <Linkedin className="w-5 h-5" />,
-      url:
-        social.find((s) => s?.name?.toLowerCase() === "linkedin")?.link ||
-        "https://linkedin.com",
-      name: "LinkedIn",
-    },
-    {
-      icon: <Mail className="w-5 h-5" />,
-      url: `mailto:${email}`,
-      name: "Email",
-    },
-  ];
+        social.find((s) => s?.name?.toLowerCase() === "github")?.link || "https://github.com",
+        name: "GitHub"
+      },
+      {
+        icon: <Linkedin className="w-5 h-5" />,
+        url:
+          social.find((s) => s?.name?.toLowerCase() === "linkedin")?.link || "https://linkedin.com",
+          name: "LinkedIn",
+      },
+      {
+        icon: <Twitter className="w-5 h-5" />,
+        url:
+          social.find((s) => s?.name?.toLowerCase() === "twitter")?.link || "https://twitter.com",
+          name: "Twitter",
+      },
+      {
+        icon: <Mail className="w-5 h-5" />,
+        url: `mailto:${email}`,
+        name: "Email",
+      },
+    ];
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (resume) {
       window.open(resume, "_blank");
     } else {
       toast.error("No resume available for download.");
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${name}'s Portfolio`,
+          text: `Check out my professional portfolio!`,
+          url: window.location.origin + `/${bio.userId || ''}`,
+        });
+        toast.success("Portfolio shared successfully!");
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(window.location.origin + `/${bio.userId || ''}`);
+        toast.success("Portfolio URL copied to clipboard!");
+      }
+    } catch (error) {
+      console.error("Share error:", error);
+      toast.error("Failed to share portfolio.");
     }
   };
 
@@ -66,7 +89,7 @@ function Hero({ bio = {} }) {
         transition={{ duration: 1.5 }}
         className="absolute inset-0 pointer-events-none"
       >
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-blue-500 mix-blend-multiply filter blur-3xl opacity-20 animate-float1"></div>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-blue-500 mix-blend-multiply filter blur-3xl opacity-20 animate-float1"></div>"
         <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-purple-500 mix-blend-multiply filter blur-3xl opacity-20 animate-float2"></div>
         <div className="absolute bottom-1/4 left-1/2 w-36 h-36 rounded-full bg-pink-500 mix-blend-multiply filter blur-3xl opacity-20 animate-float3"></div>
       </motion.div>
@@ -163,6 +186,18 @@ function Hero({ bio = {} }) {
             >
               <FileText className="w-5 h-5" />
               Download Resume
+            </Button>
+            <Button
+              size="lg"
+              className="group flex items-center gap-2"
+              onClick={handleShare}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.buttonText,
+              }}
+            >
+              <Share2 className="w-5 h-5" />
+              Share Portfolio
             </Button>
             <Button
               variant="outline"

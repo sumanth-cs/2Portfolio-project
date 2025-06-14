@@ -60,7 +60,7 @@ export const getThemeByUserId = async (req, res, next) => {
       theme: theme || {
         'text-color': '#000000',
         'bg-color': '#ffffff',
-        'primary-color': '#3b82f6',
+        'primary-color': '#0B1D51',
         'button-text': '#ffffff'
       }
     });
