@@ -1,3 +1,4 @@
+// frontend/src/components/admin/BioForm.jsx
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState, useEffect, useContext } from "react";
@@ -138,20 +139,15 @@ function BioForm({ onSave }) {
         resume: resumeUrl,
       };
 
-      console.log('Submitting bio data:', bioData);
-
       const response = await updateBio(bioData);
-      console.log('Update response:', response);
-
       if (response.success) {
-        await refetch(); // Trigger full data refresh
+        await refetch();
         toast.success('Bio updated successfully!');
         onSave(bioData);
       } else {
         throw new Error(response.message || 'Failed to update bio');
       }
     } catch (error) {
-      console.error('Failed to update bio:', error);
       toast.error(`Failed to update bio: ${error.message}`);
     } finally {
       setLoading(false);
@@ -162,61 +158,72 @@ function BioForm({ onSave }) {
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6 bg-white p-6 rounded-lg"
+      className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
     >
       <h3 className="text-2xl font-bold">Bio Settings</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            {...register("name", { required: "Name is required" })}
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              {...register("name", { required: "Name is required" })}
+              className="w-full"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="title">Professional Title</Label>
+            <Input
+              id="title"
+              {...register("title", { required: "Title is required" })}
+              className="w-full"
+            />
+            {errors.title && (
+              <p className="text-red-500 text-sm">{errors.title.message}</p>
+            )}
+          </div>
         </div>
-        <div>
-          <Label htmlFor="title">Professional Title</Label>
-          <Input
-            id="title"
-            {...register("title", { required: "Title is required" })}
-          />
-          {errors.title && (
-            <p className="text-red-500 text-sm">{errors.title.message}</p>
-          )}
-        </div>
+
         <div>
           <Label htmlFor="bio">Bio Description</Label>
           <Textarea
             id="bio"
             {...register("bio", { required: "Bio is required" })}
+            className="w-full"
           />
           {errors.bio && (
             <p className="text-red-500 text-sm">{errors.bio.message}</p>
           )}
         </div>
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email",
-              },
-            })}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
-          )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email",
+                },
+              })}
+              className="w-full"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="phone">Phone</Label>
+            <Input id="phone" {...register("phone")} className="w-full" />
+          </div>
         </div>
-        <div>
-          <Label htmlFor="phone">Phone</Label>
-          <Input id="phone" {...register("phone")} />
-        </div>
+
         <div>
           <Label htmlFor="resume">Resume (PDF)</Label>
           <Input
@@ -224,15 +231,17 @@ function BioForm({ onSave }) {
             type="file"
             accept="application/pdf"
             onChange={(e) => setResumeFile(e.target.files[0])}
+            className="w-full"
           />
           <p className="text-sm text-gray-500 mt-1">
             Current resume: {resumeFile ? resumeFile.name : portfolioData?.bio?.resume || "None"}
           </p>
         </div>
-        <div>
+
+        <div className="space-y-4">
           <Label>Skills</Label>
           <div className="space-y-2">
-            {(skills || []).map((skill, index) => (
+            {skills.map((skill, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
                   value={skill.name}
@@ -242,6 +251,7 @@ function BioForm({ onSave }) {
                     setSkills(newSkills);
                   }}
                   placeholder="Skill name"
+                  className="flex-1"
                 />
                 <Select
                   value={skill.level}
@@ -251,10 +261,10 @@ function BioForm({ onSave }) {
                     setSkills(newSkills);
                   }}
                 >
-                  <SelectTrigger className="w-32 bg-white">
+                  <SelectTrigger className="w-32">
                     <SelectValue placeholder="Level" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white">
+                  <SelectContent>
                     <SelectItem value="Basic">Basic</SelectItem>
                     <SelectItem value="Intermediate">Intermediate</SelectItem>
                     <SelectItem value="Expert">Expert</SelectItem>
@@ -275,6 +285,7 @@ function BioForm({ onSave }) {
                   setNewSkill({ ...newSkill, name: e.target.value })
                 }
                 placeholder="Skill name"
+                className="flex-1"
               />
               <Select
                 value={newSkill.level}
@@ -282,31 +293,26 @@ function BioForm({ onSave }) {
                   setNewSkill({ ...newSkill, level: value })
                 }
               >
-                <SelectTrigger className="w-32 bg-white">
+                <SelectTrigger className="w-32">
                   <SelectValue placeholder="Level" />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent>
                   <SelectItem value="Basic">Basic</SelectItem>
                   <SelectItem value="Intermediate">Intermediate</SelectItem>
                   <SelectItem value="Expert">Expert</SelectItem>
                 </SelectContent>
               </Select>
-              <Button
-                onClick={handleAddSkill}
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
-              >
+              <Button onClick={handleAddSkill}>
                 Add Skill
               </Button>
             </div>
           </div>
         </div>
-        <div>
+
+        <div className="space-y-4">
           <Label>Education</Label>
           <div className="space-y-2">
-            {(education || []).map((edu, index) => (
+            {education.map((edu, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
                   value={edu.degree}
@@ -316,6 +322,7 @@ function BioForm({ onSave }) {
                     setEducation(newEducation);
                   }}
                   placeholder="Degree"
+                  className="flex-1"
                 />
                 <Input
                   value={edu.institution}
@@ -325,6 +332,7 @@ function BioForm({ onSave }) {
                     setEducation(newEducation);
                   }}
                   placeholder="Institution"
+                  className="flex-1"
                 />
                 <Input
                   value={edu.period}
@@ -334,6 +342,7 @@ function BioForm({ onSave }) {
                     setEducation(newEducation);
                   }}
                   placeholder="Period (e.g., 2014-2018)"
+                  className="flex-1"
                 />
                 <Button
                   variant="destructive"
@@ -350,6 +359,7 @@ function BioForm({ onSave }) {
                   setNewEducation({ ...newEducation, degree: e.target.value })
                 }
                 placeholder="Degree"
+                className="flex-1"
               />
               <Input
                 value={newEducation.institution}
@@ -360,6 +370,7 @@ function BioForm({ onSave }) {
                   })
                 }
                 placeholder="Institution"
+                className="flex-1"
               />
               <Input
                 value={newEducation.period}
@@ -367,23 +378,19 @@ function BioForm({ onSave }) {
                   setNewEducation({ ...newEducation, period: e.target.value })
                 }
                 placeholder="Period"
+                className="flex-1"
               />
-              <Button
-                onClick={handleAddEducation}
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
-              >
+              <Button onClick={handleAddEducation}>
                 Add Education
               </Button>
             </div>
           </div>
         </div>
-        <div>
+
+        <div className="space-y-4">
           <Label>Experience</Label>
           <div className="space-y-2">
-            {(experience || []).map((exp, index) => (
+            {experience.map((exp, index) => (
               <div key={index} className="space-y-2 border p-2 rounded">
                 <Input
                   value={exp.title}
@@ -463,22 +470,17 @@ function BioForm({ onSave }) {
                 }
                 placeholder="Description"
               />
-              <Button
-                onClick={handleAddExperience}
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
-              >
+              <Button onClick={handleAddExperience}>
                 Add Experience
               </Button>
             </div>
           </div>
         </div>
-        <div>
+
+        <div className="space-y-4">
           <Label>Social Links</Label>
           <div className="space-y-2">
-            {(social || []).map((soc, index) => (
+            {social.map((soc, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
                   value={soc.name}
@@ -488,6 +490,7 @@ function BioForm({ onSave }) {
                     setSocial(newSocial);
                   }}
                   placeholder="Platform (e.g., GitHub)"
+                  className="flex-1"
                 />
                 <Input
                   value={soc.link}
@@ -497,6 +500,7 @@ function BioForm({ onSave }) {
                     setSocial(newSocial);
                   }}
                   placeholder="URL"
+                  className="flex-1"
                 />
                 <Button
                   variant="destructive"
@@ -513,6 +517,7 @@ function BioForm({ onSave }) {
                   setNewSocial({ ...newSocial, name: e.target.value })
                 }
                 placeholder="Platform"
+                className="flex-1"
               />
               <Input
                 value={newSocial.link}
@@ -520,26 +525,19 @@ function BioForm({ onSave }) {
                   setNewSocial({ ...newSocial, link: e.target.value })
                 }
                 placeholder="URL"
+                className="flex-1"
               />
-              <Button
-                onClick={handleAddSocial}
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.buttonText,
-                }}
-              >
+              <Button onClick={handleAddSocial}>
                 Add Social Link
               </Button>
             </div>
           </div>
         </div>
+
         <Button
           type="submit"
           disabled={loading}
-          style={{
-            backgroundColor: colors.primary,
-            color: colors.buttonText,
-          }}
+          className="w-full"
         >
           {loading ? "Saving..." : "Save Bio"}
         </Button>

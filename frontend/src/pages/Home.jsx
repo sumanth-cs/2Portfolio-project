@@ -1,3 +1,4 @@
+// frontend/src/pages/Home.jsx
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -13,7 +14,8 @@ import Footer from '../components/common/Footer';
 import { usePortfolio } from '../contexts/PortfolioContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
-import { DEFAULT_BIO, DEFAULT_PROJECTS } from '@/api/api';
+import { DEFAULT_BIO, DEFAULT_PROJECTS } from '../api/api';
+import FloatingBubbles from '@/components/common/FloatingBubbles';
 
 function Home() {
   const { userId } = useParams();
@@ -29,12 +31,11 @@ function Home() {
   if (portfolioData.loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  // Determine if we're viewing someone else's portfolio
   const isViewingOtherPortfolio = userId && userId !== user?.id;
   const displayBio = portfolioData.bio || DEFAULT_BIO;
   const displayProjects = portfolioData.projects.length > 0 ? portfolioData.projects : DEFAULT_PROJECTS;
@@ -44,11 +45,15 @@ function Home() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
+      className="relative overflow-hidden"
     >
+      {/* Floating bubbles background */}
+      <FloatingBubbles />
+
       <Header />
       
       {isViewingOtherPortfolio && (
-        <div className="bg-blue-50 text-blue-800 p-4 text-center">
+        <div className="bg-primary/10 text-primary p-4 text-center">
           <p>You're viewing {displayBio.name}'s portfolio</p>
           {user ? (
             <Link to="/">

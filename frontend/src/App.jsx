@@ -1,28 +1,26 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home.jsx';
-import Login from './pages/Login.jsx';
-import Signup from './pages/Signup.jsx';
-import AdminDashboard from './components/admin/AdminDashboard.jsx';
-import ProtectedRoute from './components/common/ProtectedRoute.jsx';
-import PortfolioPage from './pages/PortfolioPage.jsx';
+// frontend/src/App.jsx
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes/AppRoutes';
+import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { PortfolioProvider } from './contexts/PortfolioContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import './index.css';
 
-function AppRoutes() {
+function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/portfolio/:userId" element={<PortfolioPage />} />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <ThemeProvider>
+            <PortfolioProvider>
+              <AppRoutes />
+            </PortfolioProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
-export default AppRoutes;
+export default App;

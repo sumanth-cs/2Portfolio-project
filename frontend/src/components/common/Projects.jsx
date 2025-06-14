@@ -1,18 +1,19 @@
+// frontend/src/components/common/Projects.jsx
 import { motion } from 'framer-motion';
 import { ExternalLink, Github } from 'lucide-react';
 import placeholder from '../../assets/placeholder.png';
 
 function Projects({ projects, loading }) {
   if (loading) {
-    return <div className="text-center py-16">Loading...</div>;
+    return (
+      <div className="text-center py-16">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+      </div>
+    );
   }
 
   return (
     <section id="projects" className="py-20 px-4 relative">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="bubble bubble-9"></div>
-        <div className="bubble bubble-10"></div>
-      </div>
       <div className="max-w-6xl mx-auto p-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -38,7 +39,7 @@ function Projects({ projects, loading }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ scale: 1.05, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
-                className="rounded-xl overflow-hidden shadow-md"
+                className="rounded-xl overflow-hidden shadow-md bg-white dark:bg-gray-800"
               >
                 <div className="h-48 overflow-hidden relative group">
                   <img
@@ -82,12 +83,13 @@ function Projects({ projects, loading }) {
                   <p className="opacity-80 mb-4">{project.description || 'No description available'}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.tags?.map((tag, i) => (
-                      <span
+                      <motion.span
                         key={i}
-                        className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-100"
+                        whileHover={{ scale: 1.05 }}
+                        className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary"
                       >
                         {tag}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
                 </div>

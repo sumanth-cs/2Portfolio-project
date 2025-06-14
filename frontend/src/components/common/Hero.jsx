@@ -1,15 +1,15 @@
+// frontend/src/components/common/Hero.jsx
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Download, FileText } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useContext } from 'react';
-import { ThemeContext } from '@/contexts/ThemeContext.jsx';
+import { ThemeContext } from '../../contexts/ThemeContext';
 import { toast } from 'react-hot-toast';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 function Hero({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
-  // Use bio directly, with minimal fallbacks
   const name = bio.name || 'John Doe';
   const title = bio.title || 'Full Stack Developer';
   const email = bio.email || 'john.doe@example.com';
@@ -66,7 +66,7 @@ function Hero({ bio = {} }) {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="mx-auto mb-8 w-40 h-40 rounded-full border-4 border-white/20 overflow-hidden shadow-xl"
+            className="mx-auto mb-8 w-64 h-64 rounded-full border-4 border-white/20 overflow-hidden shadow-xl"
           >
             <motion.img
               src={image}
@@ -84,7 +84,6 @@ function Hero({ bio = {} }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-lg opacity-80"
-            style={{ color: colors.text }}
           >
             Hello, I'm
           </motion.p>
@@ -103,7 +102,6 @@ function Hero({ bio = {} }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
             className="text-xl md:text-2xl opacity-80 mb-8"
-            style={{ color: colors.text }}
           >
             {title}
           </motion.p>
@@ -123,7 +121,6 @@ function Hero({ bio = {} }) {
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.9 }}
                 className="p-3 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-100 transition-colors flex flex-col items-center group"
-                style={{ color: colors.text }}
                 aria-label={social.name}
               >
                 {social.icon}
@@ -144,10 +141,6 @@ function Hero({ bio = {} }) {
               size="lg"
               className="group flex items-center gap-2"
               onClick={handleDownload}
-              style={{
-                backgroundColor: colors.primary,
-                color: colors.buttonText,
-              }}
             >
               <FileText className="w-5 h-5" />
               Download Resume
@@ -157,10 +150,6 @@ function Hero({ bio = {} }) {
               size="lg"
               asChild
               className="flex items-center gap-2"
-              style={{
-                borderColor: colors.primary,
-                color: colors.primary,
-              }}
             >
               <a href="#contact">
                 <Mail className="w-5 h-5" />
