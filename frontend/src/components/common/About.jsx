@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { useContext } from "react";
 import { ThemeContext } from "@/contexts/ThemeContext.jsx";
 import defaultProfilePic from "../../assets/defaultProfilePic.jpg";
-import { getFileView } from "@/lib/appwrite/storage";
 
 function About({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
@@ -19,12 +18,6 @@ function About({ bio = {} }) {
     ...bio,
   };
 
-  // Add cache busting to the image URL if it exists
-  // const imageUrl = safeBio.aboutImage 
-  //   ? `${safeBio.aboutImage}?${new Date().getTime()}`
-  //   : defaultProfilePic;
-
-  // console.log("Final image URL:", imageUrl);
 
   return (
     <section id="about" className="py-20 px-4">
@@ -47,7 +40,7 @@ function About({ bio = {} }) {
               className="w-[300px] h-[300px] overflow-hidden rounded-3xl shadow-lg"
             >
               <img
-                src={safeBio.aboutImage}
+                src={safeBio.aboutImage || defaultProfilePic}
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => {

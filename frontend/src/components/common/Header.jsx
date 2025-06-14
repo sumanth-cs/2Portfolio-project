@@ -66,7 +66,7 @@ function Header() {
           </Link>
         </motion.div>
 
-        <div className="hidden md:flex items-center justify-between gap-10">
+        <div className="hidden md:flex items-center justify-between gap-6">
           {navItems.map((item) => (
             <a
               key={item.name}
