@@ -35,7 +35,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
   const motionProps = asChild
     ? {}
     : {
-        whileHover: { scale: 1.05 },
+        whileHover: { scale: 1.0 },
         whileTap: { scale: 0.95 },
         transition: { type: 'spring', stiffness: 400, damping: 10 },
       };

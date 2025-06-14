@@ -1,50 +1,65 @@
 // frontend/src/components/common/Hero.jsx
-import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Download, FileText } from 'lucide-react';
-import { Button } from '../ui/button';
-import { useContext } from 'react';
-import { ThemeContext } from '../../contexts/ThemeContext';
-import { toast } from 'react-hot-toast';
-import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
+import { motion } from "framer-motion";
+import { Github, Linkedin, Mail, Download, FileText } from "lucide-react";
+import { Button } from "../ui/button";
+import { useContext } from "react";
+import { ThemeContext } from "../../contexts/ThemeContext";
+import { toast } from "react-hot-toast";
+import defaultProfilePic from "../../assets/defaultProfilePic.jpg";
 
 function Hero({ bio = {} }) {
   const { colors } = useContext(ThemeContext);
 
-  const name = bio.name || 'John Doe';
-  const title = bio.title || 'Full Stack Developer';
-  const email = bio.email || 'john.doe@example.com';
+  const name = bio.name || "John Doe";
+  const title = bio.title || "Full Stack Developer";
+  const email = bio.email || "john.doe@example.com";
   const image = bio.image || defaultProfilePic;
   const social = Array.isArray(bio.social) ? bio.social : [];
-  const resume = bio.resume || '';
+  const resume = bio.resume || "";
 
   const socialLinks = [
     {
       icon: <Github className="w-5 h-5" />,
-      url: social.find((s) => s?.name?.toLowerCase() === 'github')?.link || 'https://github.com',
-      name: 'GitHub',
+      url:
+        social.find((s) => s?.name?.toLowerCase() === "github")?.link ||
+        "https://github.com",
+      name: "GitHub",
     },
     {
       icon: <Linkedin className="w-5 h-5" />,
-      url: social.find((s) => s?.name?.toLowerCase() === 'linkedin')?.link || 'https://linkedin.com',
-      name: 'LinkedIn',
+      url:
+        social.find((s) => s?.name?.toLowerCase() === "linkedin")?.link ||
+        "https://linkedin.com",
+      name: "LinkedIn",
     },
     {
       icon: <Mail className="w-5 h-5" />,
       url: `mailto:${email}`,
-      name: 'Email',
+      name: "Email",
     },
   ];
 
   const handleDownload = () => {
     if (resume) {
-      window.open(resume, '_blank');
+      window.open(resume, "_blank");
     } else {
-      toast.error('No resume available for download.');
+      toast.error("No resume available for download.");
+    }
+  };
+
+  const handleScroll = (e, hash) => {
+    e.preventDefault();
+    const element = document.querySelector(hash);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+    <section
+      id="home"
+      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+    >
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.1 }}
@@ -141,6 +156,10 @@ function Hero({ bio = {} }) {
               size="lg"
               className="group flex items-center gap-2"
               onClick={handleDownload}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.buttonText,
+              }}
             >
               <FileText className="w-5 h-5" />
               Download Resume
@@ -151,7 +170,7 @@ function Hero({ bio = {} }) {
               asChild
               className="flex items-center gap-2"
             >
-              <a href="#contact">
+              <a href="#contact" onClick={(e) => handleScroll(e, item.path)}>
                 <Mail className="w-5 h-5" />
                 Contact Me
               </a>

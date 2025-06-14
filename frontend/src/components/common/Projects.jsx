@@ -1,9 +1,13 @@
 // frontend/src/components/common/Projects.jsx
-import { motion } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
-import placeholder from '../../assets/placeholder.png';
+import { motion } from "framer-motion";
+import { ExternalLink, Github } from "lucide-react";
+import placeholder from "../../assets/placeholder.png";
+import { useContext } from "react";
+import { ThemeContext } from "@/contexts/ThemeContext";
 
 function Projects({ projects, loading }) {
+  const { colors } = useContext(ThemeContext);
+
   if (loading) {
     return (
       <div className="text-center py-16">
@@ -31,15 +35,28 @@ function Projects({ projects, loading }) {
             No projects available. Check back soon!
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project, index) => (
               <motion.div
                 key={project._id || `project-${index}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
-                className="rounded-xl overflow-hidden shadow-md bg-white dark:bg-gray-800"
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+                viewport={{ margin: "-100px" }}
+                whileHover={{
+                  scale: 1.03,
+                  boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+                }}
+                className="w-full rounded-xl overflow-hidden shadow-md"
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
               >
                 <div className="h-48 overflow-hidden relative group">
                   <img
@@ -80,13 +97,19 @@ function Projects({ projects, loading }) {
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                  <p className="opacity-80 mb-4">{project.description || 'No description available'}</p>
+                  <p className="opacity-80 mb-4">
+                    {project.description || "No description available"}
+                  </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.tags?.map((tag, i) => (
                       <motion.span
                         key={i}
                         whileHover={{ scale: 1.05 }}
-                        className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary"
+                        className="px-3 py-1 text-xs rounded-full"
+                        style={{
+                          backgroundColor: `${colors.primary}20`,
+                          color: colors.buttonText,
+                        }}
                       >
                         {tag}
                       </motion.span>

@@ -62,17 +62,17 @@ function Header() {
             className="text-2xl font-bold flex items-center gap-2"
             style={{ color: colors.text }}
           >
-            <span className="text-primary font-semibold" style={{ color: colors.primary }}>Portfolio.</span>
+            <span className="text-primary font-extrabold" style={{ color: colors.primary }}>Portfolio.</span>
           </Link>
         </motion.div>
 
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center justify-between gap-10">
           {navItems.map((item) => (
             <a
               key={item.name}
               href={item.path}
               onClick={(e) => handleScroll(e, item.path)}
-              className="relative flex items-center gap-1 hover:opacity-80 transition-opacity nav-link"
+              className="relative flex items-center gap-2 hover:opacity-80 transition-opacity nav-link"
               style={{ color: colors.text }}
             >
               {item.icon}
@@ -84,7 +84,7 @@ function Header() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <motion.div whileHover={{ scale: 1.05 }}>
+              <motion.div>
                 <Button
                   onClick={handleLogout}
                   variant="outline"
@@ -96,7 +96,7 @@ function Header() {
                 </Button>
               </motion.div>
               
-              <motion.div whileHover={{ scale: 1.05 }}>
+              <motion.div>
                 <Button 
                   asChild
                   style={{ 

@@ -10,6 +10,7 @@ import { Button } from '../components/ui/button';
 import { toast } from 'react-hot-toast';
 import { LayoutDashboard, User, Image, Palette, Briefcase, RefreshCw } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Admin = () => {
   const { user } = useAuth();
@@ -79,9 +80,9 @@ const Admin = () => {
                 color: colors.buttonText,
               }}
             >
-              <a href={`/portfolio/${user?.id}`} target="_blank" rel="noopener noreferrer">
-                View Portfolio
-              </a>
+              <Link to="/">
+                Back to Home
+              </Link>
             </Button>
           </div>
         </div>

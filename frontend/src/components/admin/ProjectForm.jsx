@@ -101,12 +101,12 @@ function ProjectForm({ onSave }) {
   };
 
   return (
-    <Card>
+    <Card className="bg-gray-100 dark:bg-white">
       <CardHeader>
         <CardTitle>Manage Projects</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mb-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mb-6 ">
           <div>
             <Label htmlFor="title">Project Title</Label>
             <Input

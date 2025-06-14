@@ -35,11 +35,11 @@ const FloatingBubbles = () => {
 
   // Bubble configurations
   const bubbles = [
-    { size: 'w-64 h-64', color: 'bg-blue-400/10', animation: 'animate-float1' },
-    { size: 'w-48 h-48', color: 'bg-purple-400/10', animation: 'animate-float2' },
-    { size: 'w-56 h-56', color: 'bg-pink-400/10', animation: 'animate-float3' },
-    { size: 'w-72 h-72', color: 'bg-indigo-400/10', animation: 'animate-float4' },
-    { size: 'w-40 h-40', color: 'bg-teal-400/10', animation: 'animate-float5' },
+    { size: 'w-64 h-64', color: 'bg-blue-400/50', animation: 'animate-float1' },
+    { size: 'w-48 h-48', color: 'bg-purple-400/50', animation: 'animate-float2' },
+    { size: 'w-56 h-56', color: 'bg-pink-400/40', animation: 'animate-float3' },
+    { size: 'w-72 h-72', color: 'bg-indigo-400/50', animation: 'animate-float4' },
+    { size: 'w-40 h-40', color: 'bg-teal-400/40', animation: 'animate-float5' },
   ];
 
   return (

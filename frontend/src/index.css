@@ -17,18 +17,39 @@ body {
 
 /* Animations */
 @keyframes float1 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-10px, -15px); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(-10px, -15px);
+  }
 }
 
 @keyframes float2 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(15px, 10px); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(15px, 10px);
+  }
 }
 
 @keyframes float3 {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(5px, -10px); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(5px, -10px);
+  }
 }
 
 .animate-float1 {
@@ -44,7 +65,9 @@ body {
 }
 
 /* Smooth transitions */
-a, button, .transition-all {
+a,
+button,
+.transition-all {
   transition: all 0.3s ease;
 }
 
@@ -84,11 +107,12 @@ a, button, .transition-all {
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -114,28 +138,63 @@ button:hover {
 
 /* Add to your index.css */
 @keyframes float1 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(-5%, -5%) rotate(5deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(-5%, -5%) rotate(5deg);
+  }
 }
 
 @keyframes float2 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(4%, 6%) rotate(-3deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(4%, 6%) rotate(-3deg);
+  }
 }
 
 @keyframes float3 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(6%, -4%) rotate(7deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(6%, -4%) rotate(7deg);
+  }
 }
 
 @keyframes float4 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(-7%, 3%) rotate(-5deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(-7%, 3%) rotate(-5deg);
+  }
 }
 
 @keyframes float5 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(3%, 8%) rotate(2deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(3%, 8%) rotate(2deg);
+  }
 }
 
 .animate-float1 {
@@ -156,4 +215,28 @@ button:hover {
 
 .animate-float5 {
   animation: float5 28s ease-in-out infinite;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+/* In your global CSS file */
+@media (max-width: 768px) {
+  #education, #experience, #projects {
+    padding: 2rem 1rem;
+  }
+  
+  .max-w-4xl, .max-w-6xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }

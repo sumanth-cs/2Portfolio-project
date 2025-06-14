@@ -119,6 +119,11 @@ function BioForm({ onSave }) {
   };
 
   const onSubmit = async (data) => {
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please fix the errors before submitting");
+      return;
+    }
+
     setLoading(true);
     try {
       let resumeUrl = data.resume;
@@ -142,10 +147,10 @@ function BioForm({ onSave }) {
       const response = await updateBio(bioData);
       if (response.success) {
         await refetch();
-        toast.success('Bio updated successfully!');
+        toast.success("Bio updated successfully!");
         onSave(bioData);
       } else {
-        throw new Error(response.message || 'Failed to update bio');
+        throw new Error(response.message || "Failed to update bio");
       }
     } catch (error) {
       toast.error(`Failed to update bio: ${error.message}`);
@@ -158,10 +163,10 @@ function BioForm({ onSave }) {
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+      className="space-y-6 bg-gray-100 dark:bg-white p-6 rounded-lg shadow-lg"
     >
       <h3 className="text-2xl font-bold">Bio Settings</h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="name">Name</Label>
@@ -233,8 +238,11 @@ function BioForm({ onSave }) {
             onChange={(e) => setResumeFile(e.target.files[0])}
             className="w-full"
           />
-          <p className="text-sm text-gray-500 mt-1">
-            Current resume: {resumeFile ? resumeFile.name : portfolioData?.bio?.resume || "None"}
+          <p className="text-sm text-gray-500 mt-1 truncate">
+            Current resume:{" "}
+            {resumeFile
+              ? resumeFile.name
+              : portfolioData?.bio?.resume?.split("/").pop() || "None"}
           </p>
         </div>
 
@@ -264,7 +272,7 @@ function BioForm({ onSave }) {
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Level" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
                     <SelectItem value="Basic">Basic</SelectItem>
                     <SelectItem value="Intermediate">Intermediate</SelectItem>
                     <SelectItem value="Expert">Expert</SelectItem>
@@ -302,7 +310,13 @@ function BioForm({ onSave }) {
                   <SelectItem value="Expert">Expert</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleAddSkill}>
+              <Button
+                onClick={handleAddSkill}
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
+              >
                 Add Skill
               </Button>
             </div>
@@ -380,7 +394,13 @@ function BioForm({ onSave }) {
                 placeholder="Period"
                 className="flex-1"
               />
-              <Button onClick={handleAddEducation}>
+              <Button
+                onClick={handleAddEducation}
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
+              >
                 Add Education
               </Button>
             </div>
@@ -459,7 +479,8 @@ function BioForm({ onSave }) {
                 onChange={(e) =>
                   setNewExperience({ ...newExperience, period: e.target.value })
                 }
-                placeholder="Period" />
+                placeholder="Period"
+              />
               <Textarea
                 value={newExperience.description}
                 onChange={(e) =>
@@ -470,7 +491,13 @@ function BioForm({ onSave }) {
                 }
                 placeholder="Description"
               />
-              <Button onClick={handleAddExperience}>
+              <Button
+                onClick={handleAddExperience}
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
+              >
                 Add Experience
               </Button>
             </div>
@@ -527,7 +554,13 @@ function BioForm({ onSave }) {
                 placeholder="URL"
                 className="flex-1"
               />
-              <Button onClick={handleAddSocial}>
+              <Button
+                onClick={handleAddSocial}
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.buttonText,
+                }}
+              >
                 Add Social Link
               </Button>
             </div>
@@ -538,6 +571,10 @@ function BioForm({ onSave }) {
           type="submit"
           disabled={loading}
           className="w-full"
+          style={{
+            backgroundColor: colors.primary,
+            color: colors.buttonText,
+          }}
         >
           {loading ? "Saving..." : "Save Bio"}
         </Button>
