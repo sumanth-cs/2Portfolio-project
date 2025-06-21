@@ -1,21 +1,24 @@
-import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 
 function Skills({ skills, loading }) {
   if (loading) {
     return <div className="text-center py-16">Loading...</div>;
   }
 
+  const DEFAULT_LEVEL = "Intermediate";
+
   const getLevelColor = (level) => {
-    switch (level.toLowerCase()) {
-      case 'expert':
-        return 'bg-green-500';
-      case 'intermediate':
-        return 'bg-yellow-500';
-      case 'basic':
-        return 'bg-blue-500';
+    const levelToCheck = level || DEFAULT_LEVEL;
+    switch (levelToCheck.toLowerCase()) {
+      case "expert":
+        return "bg-green-500";
+      case "intermediate":
+        return "bg-yellow-500";
+      case "basic":
+        return "bg-blue-500";
       default:
-        return 'bg-gray-500';
+        return "bg-gray-500";
     }
   };
 
@@ -51,9 +54,15 @@ function Skills({ skills, loading }) {
                 <h3 className="font-medium">{skill.name}</h3>
                 <Star className="w-5 h-5 text-yellow-400" />
               </div>
-              <span className={`px-3 py-1 text-sm rounded-full text-white ${getLevelColor(skill.level)}`}>
-                {skill.level}
-              </span>
+              {skill.level && (
+                <span
+                  className={`px-3 py-1 text-sm rounded-full text-white ${getLevelColor(
+                    skill.level
+                  )}`}
+                >
+                  {skill.level}
+                </span>
+              )}
             </motion.div>
           ))}
         </div>

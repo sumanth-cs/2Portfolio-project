@@ -304,7 +304,7 @@ function BioForm({ onSave }) {
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Level" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="Basic">Basic</SelectItem>
                   <SelectItem value="Intermediate">Intermediate</SelectItem>
                   <SelectItem value="Expert">Expert</SelectItem>

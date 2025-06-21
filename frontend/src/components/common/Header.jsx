@@ -55,7 +55,7 @@ function Header() {
       }`}
       style={{ backgroundColor: colors.background }}
     >
-      <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
+      <nav className="container mx-auto px-4 py-3 flex justify-around items-center">
         <motion.div whileHover={{ scale: 1.05 }}>
           <Link 
             to="/" 
@@ -66,7 +66,7 @@ function Header() {
           </Link>
         </motion.div>
 
-        <div className="hidden md:flex items-center justify-between gap-6">
+        <div className="hidden md:flex items-center justify-around gap-6">
           {navItems.map((item) => (
             <a
               key={item.name}
@@ -117,7 +117,7 @@ function Header() {
                 <Button
                   asChild
                   variant="outline"
-                  className="border-current hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="border-current hover:bg-gray-100 dark:hover:bg-gray-200"
                   style={{ color: colors.text }}
                 >
                   <Link to="/login">Login</Link>
