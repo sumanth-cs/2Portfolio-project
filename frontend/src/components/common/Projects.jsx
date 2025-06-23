@@ -1,12 +1,23 @@
-// frontend/src/components/common/Projects.jsx
 import { motion } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
 import placeholder from "../../assets/placeholder.png";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "@/contexts/ThemeContext";
 
 function Projects({ projects, loading }) {
   const { colors } = useContext(ThemeContext);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px is typical breakpoint for tablets
+    };
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   if (loading) {
     return (
@@ -48,10 +59,10 @@ function Projects({ projects, loading }) {
                   stiffness: 100,
                 }}
                 viewport={{ margin: "-100px" }}
-                whileHover={{
+                whileHover={!isMobile ? {
                   scale: 1.03,
                   boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-                }}
+                } : {}}
                 className="w-full rounded-xl overflow-hidden shadow-md"
                 style={{
                   backgroundColor: colors.primary,
@@ -65,19 +76,51 @@ function Projects({ projects, loading }) {
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     onError={(e) => (e.target.src = placeholder)}
                   />
-                  <motion.div
-                    className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  
+                  {/* Desktop hover overlay */}
+                  {!isMobile && (
+                    <motion.div
+                      className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {project.codeUrl && (
+                        <motion.a
+                          href={project.codeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.2 }}
+                          className="p-2 rounded-full bg-white text-black"
+                        >
+                          <Github className="w-5 h-5" />
+                        </motion.a>
+                      )}
+                      {project.liveUrl && (
+                        <motion.a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.2 }}
+                          className="p-2 rounded-full bg-white text-black"
+                        >
+                          <ExternalLink className="w-5 h-5" />
+                        </motion.a>
+                      )}
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Mobile action buttons (always visible) */}
+                {isMobile && (
+                  <div className="flex justify-center gap-4 pt-3 ">
                     {project.codeUrl && (
                       <motion.a
                         href={project.codeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        whileHover={{ scale: 1.2 }}
-                        className="p-2 rounded-full bg-white text-black"
+                        whileTap={{ scale: 0.9 }}
+                        className="p-2 rounded-full bg-black text-white"
                       >
                         <Github className="w-5 h-5" />
                       </motion.a>
@@ -87,14 +130,15 @@ function Projects({ projects, loading }) {
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        whileHover={{ scale: 1.2 }}
-                        className="p-2 rounded-full bg-white text-black"
+                        whileTap={{ scale: 0.9 }}
+                        className="p-2 rounded-full bg-black text-white"
                       >
                         <ExternalLink className="w-5 h-5" />
                       </motion.a>
                     )}
-                  </motion.div>
-                </div>
+                  </div>
+                )}
+
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{project.title}</h3>
                   <p className="opacity-80 mb-4">
