@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { usePortfolio } from "../../contexts/PortfolioContext";
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 import { Home, Image, Palette, Briefcase, LogOut } from "lucide-react";
 
 function AdminDashboard() {
-  const { user, signout } = useContext(AuthContext); // Updated to use signout
+  const { user, signout } = useContext(AuthContext);
   const { refetch } = usePortfolio();
   const [activeTab, setActiveTab] = useState("bio");
   const tabs = [
@@ -30,10 +30,22 @@ function AdminDashboard() {
     },
   ];
 
+  // Load active tab from localStorage on component mount
+  useEffect(() => {
+    const savedTab = localStorage.getItem("adminActiveTab");
+    if (savedTab && tabs.some((tab) => tab.id === savedTab)) {
+      setActiveTab(savedTab);
+    }
+  }, []);
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    localStorage.setItem("adminActiveTab", tabId);
+  };
+
   const handleSave = async (data) => {
     try {
-      await refetch(); // Refresh data after save
-      console.log("Saved:", data);
+      await refetch();
       toast.success("Changes saved successfully");
     } catch (error) {
       toast.error("Failed to save changes");
@@ -43,6 +55,9 @@ function AdminDashboard() {
   const handleLogout = async () => {
     try {
       await signout();
+      // Clear all saved form data on logout
+      localStorage.removeItem("bioFormData");
+      localStorage.removeItem("adminActiveTab");
       toast.success("Logged out successfully");
     } catch (error) {
       toast.error("Logout failed");
@@ -74,7 +89,7 @@ function AdminDashboard() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`px-3 py-2 font-medium text-xs sm:text-sm flex items-center shrink-0 ${
                 activeTab === tab.id
                   ? "text-blue-600 border-b-2 border-blue-600"

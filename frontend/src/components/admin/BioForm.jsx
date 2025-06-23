@@ -1,4 +1,3 @@
-// frontend/src/components/admin/BioForm.jsx
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState, useEffect, useContext } from "react";
@@ -25,6 +24,7 @@ function BioForm({ onSave }) {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm();
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,63 @@ function BioForm({ onSave }) {
   const { colors } = useContext(ThemeContext);
   const { portfolioData, refetch } = usePortfolio();
 
+  // Save form data to localStorage with debouncing
+  const saveFormToLocalStorage = () => {
+    const formValues = {
+      name: getValues("name"),
+      title: getValues("title"),
+      bio: getValues("bio"),
+      email: getValues("email"),
+      phone: getValues("phone"),
+      resume: getValues("resume"),
+    };
+
+    const formData = {
+      version: 1,
+      lastSaved: new Date().toISOString(),
+      formValues,
+      skills,
+      education,
+      experience,
+      social,
+      resumeFile: resumeFile ? resumeFile.name : null,
+    };
+
+    localStorage.setItem("bioFormData", JSON.stringify(formData));
+  };
+
+  // Debounce function to limit how often we save to localStorage
+  const debounce = (func, delay) => {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, args), delay);
+    };
+  };
+
+  const debouncedSave = debounce(saveFormToLocalStorage, 500);
+
+  // Load saved data on component mount
   useEffect(() => {
+    const loadSavedData = () => {
+      const savedFormData = localStorage.getItem("bioFormData");
+      if (savedFormData) {
+        try {
+          const parsedData = JSON.parse(savedFormData);
+          if (parsedData.version === 1) {
+            reset(parsedData.formValues);
+            setSkills(parsedData.skills || []);
+            setEducation(parsedData.education || []);
+            setExperience(parsedData.experience || []);
+            setSocial(parsedData.social || []);
+          }
+        } catch (e) {
+          localStorage.removeItem("bioFormData");
+        }
+      }
+    };
+
+    // First try to load from portfolio data
     if (portfolioData?.bio) {
       reset({
         name: portfolioData.bio.name || "",
@@ -63,18 +119,39 @@ function BioForm({ onSave }) {
       setEducation(portfolioData.bio.education || []);
       setExperience(portfolioData.bio.experience || []);
       setSocial(portfolioData.bio.social || []);
+    } else {
+      // Fall back to localStorage if no portfolio data
+      loadSavedData();
     }
+
+    // Set up beforeunload handler
+    const handleBeforeUnload = () => {
+      saveFormToLocalStorage();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      saveFormToLocalStorage();
+    };
   }, [portfolioData, reset]);
+
+  // Form field handlers with auto-save
+  const handleInputChange = () => {
+    debouncedSave();
+  };
 
   const handleAddSkill = () => {
     if (newSkill.name.trim()) {
       setSkills([...skills, newSkill]);
       setNewSkill({ name: "", level: "Basic" });
+      debouncedSave();
     }
   };
 
   const handleRemoveSkill = (index) => {
     setSkills(skills.filter((_, i) => i !== index));
+    debouncedSave();
   };
 
   const handleAddEducation = () => {
@@ -85,11 +162,13 @@ function BioForm({ onSave }) {
     ) {
       setEducation([...education, newEducation]);
       setNewEducation({ degree: "", institution: "", period: "" });
+      debouncedSave();
     }
   };
 
   const handleRemoveEducation = (index) => {
     setEducation(education.filter((_, i) => i !== index));
+    debouncedSave();
   };
 
   const handleAddExperience = () => {
@@ -100,22 +179,26 @@ function BioForm({ onSave }) {
     ) {
       setExperience([...experience, newExperience]);
       setNewExperience({ title: "", company: "", period: "", description: "" });
+      debouncedSave();
     }
   };
 
   const handleRemoveExperience = (index) => {
     setExperience(experience.filter((_, i) => i !== index));
+    debouncedSave();
   };
 
   const handleAddSocial = () => {
     if (newSocial.name.trim() && newSocial.link.trim()) {
       setSocial([...social, newSocial]);
       setNewSocial({ name: "", link: "" });
+      debouncedSave();
     }
   };
 
   const handleRemoveSocial = (index) => {
     setSocial(social.filter((_, i) => i !== index));
+    debouncedSave();
   };
 
   const onSubmit = async (data) => {
@@ -146,6 +229,7 @@ function BioForm({ onSave }) {
 
       const response = await updateBio(bioData);
       if (response.success) {
+        localStorage.removeItem("bioFormData");
         await refetch();
         toast.success("Bio updated successfully!");
         onSave(bioData);
@@ -174,6 +258,7 @@ function BioForm({ onSave }) {
               id="name"
               {...register("name", { required: "Name is required" })}
               className="w-full"
+              onChange={handleInputChange}
             />
             {errors.name && (
               <p className="text-red-500 text-sm">{errors.name.message}</p>
@@ -185,6 +270,7 @@ function BioForm({ onSave }) {
               id="title"
               {...register("title", { required: "Title is required" })}
               className="w-full"
+              onChange={handleInputChange}
             />
             {errors.title && (
               <p className="text-red-500 text-sm">{errors.title.message}</p>
@@ -198,6 +284,7 @@ function BioForm({ onSave }) {
             id="bio"
             {...register("bio", { required: "Bio is required" })}
             className="w-full"
+            onChange={handleInputChange}
           />
           {errors.bio && (
             <p className="text-red-500 text-sm">{errors.bio.message}</p>
@@ -218,6 +305,7 @@ function BioForm({ onSave }) {
                 },
               })}
               className="w-full"
+              onChange={handleInputChange}
             />
             {errors.email && (
               <p className="text-red-500 text-sm">{errors.email.message}</p>
@@ -225,7 +313,12 @@ function BioForm({ onSave }) {
           </div>
           <div>
             <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" {...register("phone")} className="w-full" />
+            <Input 
+              id="phone" 
+              {...register("phone")} 
+              className="w-full" 
+              onChange={handleInputChange} 
+            />
           </div>
         </div>
 
@@ -235,7 +328,10 @@ function BioForm({ onSave }) {
             id="resume"
             type="file"
             accept="application/pdf"
-            onChange={(e) => setResumeFile(e.target.files[0])}
+            onChange={(e) => {
+              setResumeFile(e.target.files[0]);
+              debouncedSave();
+            }}
             className="w-full"
           />
           <p className="text-sm text-gray-500 mt-1 truncate">
@@ -257,6 +353,7 @@ function BioForm({ onSave }) {
                     const newSkills = [...skills];
                     newSkills[index].name = e.target.value;
                     setSkills(newSkills);
+                    debouncedSave();
                   }}
                   placeholder="Skill name"
                   className="flex-1"
@@ -267,6 +364,7 @@ function BioForm({ onSave }) {
                     const newSkills = [...skills];
                     newSkills[index].level = value;
                     setSkills(newSkills);
+                    debouncedSave();
                   }}
                 >
                   <SelectTrigger className="w-32">
@@ -334,6 +432,7 @@ function BioForm({ onSave }) {
                     const newEducation = [...education];
                     newEducation[index].degree = e.target.value;
                     setEducation(newEducation);
+                    debouncedSave();
                   }}
                   placeholder="Degree"
                   className="flex-1"
@@ -344,6 +443,7 @@ function BioForm({ onSave }) {
                     const newEducation = [...education];
                     newEducation[index].institution = e.target.value;
                     setEducation(newEducation);
+                    debouncedSave();
                   }}
                   placeholder="Institution"
                   className="flex-1"
@@ -354,6 +454,7 @@ function BioForm({ onSave }) {
                     const newEducation = [...education];
                     newEducation[index].period = e.target.value;
                     setEducation(newEducation);
+                    debouncedSave();
                   }}
                   placeholder="Period (e.g., 2014-2018)"
                   className="flex-1"
@@ -418,6 +519,7 @@ function BioForm({ onSave }) {
                     const newExperience = [...experience];
                     newExperience[index].title = e.target.value;
                     setExperience(newExperience);
+                    debouncedSave();
                   }}
                   placeholder="Job Title"
                 />
@@ -427,6 +529,7 @@ function BioForm({ onSave }) {
                     const newExperience = [...experience];
                     newExperience[index].company = e.target.value;
                     setExperience(newExperience);
+                    debouncedSave();
                   }}
                   placeholder="Company"
                 />
@@ -436,6 +539,7 @@ function BioForm({ onSave }) {
                     const newExperience = [...experience];
                     newExperience[index].period = e.target.value;
                     setExperience(newExperience);
+                    debouncedSave();
                   }}
                   placeholder="Period (e.g., 2020-Present)"
                 />
@@ -445,6 +549,7 @@ function BioForm({ onSave }) {
                     const newExperience = [...experience];
                     newExperience[index].description = e.target.value;
                     setExperience(newExperience);
+                    debouncedSave();
                   }}
                   placeholder="Description"
                 />
@@ -515,6 +620,7 @@ function BioForm({ onSave }) {
                     const newSocial = [...social];
                     newSocial[index].name = e.target.value;
                     setSocial(newSocial);
+                    debouncedSave();
                   }}
                   placeholder="Platform (e.g., GitHub)"
                   className="flex-1"
@@ -525,6 +631,7 @@ function BioForm({ onSave }) {
                     const newSocial = [...social];
                     newSocial[index].link = e.target.value;
                     setSocial(newSocial);
+                    debouncedSave();
                   }}
                   placeholder="URL"
                   className="flex-1"
